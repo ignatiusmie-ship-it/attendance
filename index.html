@@ -53,6 +53,11 @@ nav.tabs button[aria-current="page"]{background:var(--surface);color:var(--ink);
 .me{display:flex;align-items:center;gap:8px;font-size:14px;white-space:nowrap}
 .me .av{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--surface);display:grid;place-items:center;font-size:12px;font-weight:700}
 body.gated nav.tabs,body.gated #yearSel{visibility:hidden}
+body.viewer nav.tabs{visibility:hidden}
+.me-card{padding:16px 18px}
+.admins{list-style:none;padding:0;margin:8px 0}
+.admins li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2);font-size:14px}
+.warn-text{color:var(--danger)!important}
 .gate{max-width:500px;margin:70px auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:30px 32px}
 .gate h2{font-size:22px;margin:0 0 8px}
 .gate p{color:var(--muted);margin:0 0 20px}
@@ -622,12 +627,13 @@ function adopt(obj,keepYear){
 
 /* saving */
 function changed(){
+  if(!isAdmin()) return;
   st.dirty=true; editVer++; setStatus();
   clearTimeout(saveTimer); saveTimer=setTimeout(pushSave,1200);
 }
 async function pushSave(depth=0){
   clearTimeout(saveTimer);
-  if(sp.saving||!st.dirty||sp.readOnly||!driveId) return;
+  if(sp.saving||!st.dirty||sp.readOnly||!driveId||!isAdmin()) return;
   const sent=editVer, body=serialize();
   const headers={'Content-Type':'application/json'}; let url=filePath()+':/content';
   if(sp.exists&&sp.eTag) headers['If-Match']=sp.eTag; else url+='?@microsoft.graph.conflictBehavior=fail';
@@ -668,6 +674,7 @@ function ago(iso){if(!iso)return '';const s=(Date.now()-Date.parse(iso))/1000;if
 function setStatus(){
   const el=document.getElementById('status'); let t,full='',cls='';
   if(!driveId){t='Not connected';cls='dirty'}
+  else if(!isAdmin()){t='View only';full='You can see your own attendance. Only admins can make changes.';cls=''}
   else if(sp.readOnly){t='View only';full='You can view but not edit attendance.';cls='dirty'}
   else if(sp.error==='auth'){t='Sign-in expired. Reload the page.';cls='bad'}
   else if(sp.error){t="Couldn't reach SharePoint, retrying";full='Keep this page open so your change is not lost.';cls='bad'}
@@ -706,11 +713,20 @@ function filtered(list){
 function refDate(){const y=String(data.year);return TODAY.startsWith(y)?TODAY:(TODAY>y?`${y}-12-31`:`${y}-01-01`)}
 function activeInYear(e){const y=data.year;return e.doj<=`${y}-12-31`&&(!e.lwd||e.lwd>=`${y}-01-01`)}
 function isCurrent(e){return !e.lwd||e.lwd>=refDate()}
+/* ---------- roles ----------
+   Admins (emails in settings.admins) can edit everything. Everyone else gets a read-only "My attendance"
+   page showing only their own record, matched by the work email on their People entry.
+   While the admin list is empty, everyone who signs in can edit (so the first admin can set it up). */
+function myEmail(){return ((account&&account.username)||'').toLowerCase()}
+function admins(){return (data&&data.settings.admins)||[]}
+function isAdmin(){const a=admins();return !a.length||a.includes(myEmail())}
+function myEmp(){const m=myEmail();return m?data.employees.find(e=>(e.email||'').toLowerCase()===m):null}
 
 /* ---------- render: shell ---------- */
 const main=document.getElementById('main');
 function yearList(){
   const ys=new Set(Object.keys(data.years).map(Number)); const cy=new Date().getFullYear();
+  if(!isAdmin()){ys.add(data.year);return [...ys].sort((a,b)=>a-b)}
   const maxY=Math.max(cy,...ys); ys.add(maxY+1);
   for(let y=Math.min(...ys);y<=maxY+1;y++) ys.add(y);
   return [...ys].sort((a,b)=>a-b);
@@ -730,10 +746,13 @@ function switchYear(y){
 document.getElementById('yearSel').addEventListener('change',e=>switchYear(+e.target.value));
 function render(){
   if(!data) return;
+  const viewer=!isAdmin();
+  document.body.classList.toggle('viewer',viewer);
+  if(viewer) st.view='me'; else if(st.view==='me') st.view='balances';
   main.classList.toggle('reg',st.view==='register');
   renderYearSel();
   document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.view===st.view?'page':'false'));
-  ({balances:renderBalances,register:renderRegister,people:renderPeople,holidays:renderHolidays})[st.view]();
+  ({balances:renderBalances,register:renderRegister,people:renderPeople,holidays:renderHolidays,me:renderMe})[st.view]();
 }
 document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{st.view=b.dataset.view;render()});
 
@@ -796,6 +815,7 @@ function renderBalances(keepFocus){
       <div><h1>Leave balances, ${data.year}</h1></div>
       ${controlsHTML(`<label class="check"><input type="checkbox" id="former" ${st.former?'checked':''}> Show people who left (${formerCount})</label>`)}
     </div>
+    ${admins().length?'':`<div class="banner"><p><b>Anyone who signs in can edit right now.</b> Add yourself as admin in Holidays &amp; policy, and add each person's work email in People, so staff only see their own attendance.</p><button class="btn" id="goAdm">Set up admins</button></div>`}
     ${todayHTML()}
     <div class="card scroll-x">
     ${list.length?`<table class="list">
@@ -812,6 +832,7 @@ function renderBalances(keepFocus){
       </tr>`).join('')}</tbody></table>`:`<div class="empty">No one matches. Clear the search or pick "All managers".</div>`}
     </div>`;
   bindControls(r=>{renderBalances(r);if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
+  const ga=document.getElementById('goAdm'); if(ga) ga.onclick=()=>{st.view='holidays';render()};
   document.getElementById('former').onchange=e=>{st.former=e.target.checked;renderBalances()};
   main.querySelectorAll('th.sortable').forEach(t=>t.onclick=()=>{const k=t.dataset.sort;if(st.sort===k)st.sortDir*=-1;else{st.sort=k;st.sortDir=(k==='order'||k==='name')?1:-1}renderBalances()});
   main.querySelectorAll('tr[data-open]').forEach(tr=>tr.onclick=()=>openPerson(tr.dataset.open));
@@ -958,13 +979,10 @@ function leaveDatesHTML(e){
   if(!groups.length) return `<div class="ld-empty">No leave taken in ${data.year}.</div>`;
   return `<div class="ld-sum">${fmt(total)} day${total===1?'':'s'} across ${groups.length} month${groups.length===1?'':'s'}</div>${groups.join('')}<div class="ld-key"><span class="sq"></span>Full day<span class="sq am"></span>Morning<span class="sq pm"></span>Afternoon</div>`;
 }
-function openPerson(id){
-  const e=emp(id), s=yearStats(e);
+function personReportHTML(e){
+  const s=yearStats(e);
   const rows=s.months.map((r,i)=>r?`<tr><td>${MONTHS[i]}</td><td>${fmt(r.avail)}</td><td>${fmt(r.lve)}</td><td style="${r.bal<0?'color:var(--danger);font-weight:700':''}">${fmt(r.bal)}</td><td>${fmt(r.wfo)}</td><td>${fmt(r.wfh)}</td><td style="${r.lop?'color:var(--lop);font-weight:700':''}">${fmt(r.lop)}</td><td>${fmt(r.salary)}</td></tr>`:`<tr class="na"><td>${MONTHS[i]}</td><td colspan="7">not employed</td></tr>`).join('');
-  showDlg(`
-    <div class="dlg-head"><div><h2>${esc(e.name)}</h2><div class="facts">${esc(e.category||'')}${e.manager?`, reports to ${esc(e.manager)}`:''}. Joined ${nice(e.doj)}${e.lwd?`, last day ${nice(e.lwd)}`:''}.${e.note?` Note: ${esc(e.note)}`:''}</div></div><button class="x" data-close aria-label="Close">×</button></div>
-    <div class="dlg-body">
-      <div class="person-grid">
+  return `<div class="person-grid">
         <aside class="p-side">
           <div class="p-nums">
             <div><strong>${fmt(s.ent)}</strong><span>entitled</span></div>
@@ -980,12 +998,33 @@ function openPerson(id){
       <tbody>${rows}</tbody><tfoot><tr><td>Year</td><td>${fmt(s.ent)}</td><td>${fmt(s.taken)}</td><td>${fmt(s.ent-s.taken)}</td><td>${fmt(s.tot.wfo)}</td><td>${fmt(s.tot.wfh)}</td><td>${fmt(s.tot.lop)}</td><td>${fmt(s.tot.salary)}</td></tr></tfoot></table></div>
           <p class="p-note">${entitlementWhy(e)}${s.tot.unmarked?` ${fmt(s.tot.unmarked)} working days up to today are not marked yet.`:''}</p>
         </div>
-      </div>
-    </div>
+      </div>`;
+}
+function personFacts(e){return `${esc(e.category||'')}${e.manager?`, reports to ${esc(e.manager)}`:''}. Joined ${nice(e.doj)}${e.lwd?`, last day ${nice(e.lwd)}`:''}.`}
+function openPerson(id){
+  const e=emp(id);
+  showDlg(`
+    <div class="dlg-head"><div><h2>${esc(e.name)}</h2><div class="facts">${personFacts(e)}${e.note?` Note: ${esc(e.note)}`:''}</div></div><button class="x" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body">${personReportHTML(e)}</div>
     <div class="dlg-foot"><button class="btn" id="pEdit">Edit details</button><button class="btn primary" data-close>Close</button></div>`,'wide');
   document.getElementById('pEdit').onclick=()=>openEmployee(id);
 }
-
+/* ---------- view: my attendance (staff, read-only) ---------- */
+function renderMe(){
+  const e=myEmp();
+  if(!e){
+    main.innerHTML=`<div class="gate"><h2>Your account isn't linked yet.</h2><p>You're signed in as <b>${esc(myEmail()||'unknown')}</b>, but no one in the attendance register has this work email. Ask the attendance admin to add it to your entry in People.</p></div>`;
+    return;
+  }
+  if(!activeInYear(e)){
+    main.innerHTML=`<div class="head"><div><h1>${esc(e.name)}</h1></div></div><div class="card panel"><p>You weren't employed in ${data.year}. Pick another year at the top.</p></div>`;
+    return;
+  }
+  main.innerHTML=`
+    <div class="head"><div><h1>My attendance, ${data.year}</h1><p class="sub">${esc(e.name)}. ${personFacts(e)}</p></div></div>
+    <div class="card me-card">${personReportHTML(e)}</div>
+    <p class="hint" style="margin-top:12px">This page is view only. If something looks wrong, contact your manager or the attendance admin.</p>`;
+}
 /* ---------- view: people ---------- */
 function renderPeople(){
   const list=filtered(data.employees);
@@ -993,16 +1032,16 @@ function renderPeople(){
     <div class="head"><div><h1>People</h1><p class="sub">Add joiners, record a last working day when someone leaves, or set a custom leave allowance.</p></div>
       ${controlsHTML(`<button class="btn primary" id="addP">Add person</button>`)}</div>
     <div class="card scroll-x"><table class="list">
-      <thead><tr><th>Name</th><th>Category</th><th>Manager</th><th>Joined</th><th>Last day</th><th class="num">Leave for ${data.year}</th><th>Status</th></tr></thead>
+      <thead><tr><th>Name</th><th>Work email</th><th>Category</th><th>Manager</th><th>Joined</th><th>Last day</th><th class="num">Leave for ${data.year}</th><th>Status</th></tr></thead>
       <tbody>${list.map(e=>{const status=!isCurrent(e)?'<span class="status-pill left">Left</span>':e.lwd?'<span class="status-pill soon">Leaving</span>':e.doj>TODAY?'<span class="status-pill soon">Joining</span>':'<span class="status-pill">Active</span>';
-        return `<tr data-edit="${e.id}"><td class="who"><b>${esc(e.name)}</b>${e.note?`<small>${esc(e.note)}</small>`:''}</td><td>${esc(e.category)}</td><td>${esc(e.manager)}</td><td>${nice(e.doj)}</td><td>${e.lwd?nice(e.lwd):''}</td><td class="num">${fmt(entitlement(e))}${getOverride(e)!==null?' <span class="tag">custom</span>':''}</td><td>${status}</td></tr>`}).join('')}</tbody>
+        return `<tr data-edit="${e.id}"><td class="who"><b>${esc(e.name)}</b>${e.note?`<small>${esc(e.note)}</small>`:''}</td><td>${e.email?esc(e.email):'<span class="tag">Not linked</span>'}</td><td>${esc(e.category)}</td><td>${esc(e.manager)}</td><td>${nice(e.doj)}</td><td>${e.lwd?nice(e.lwd):''}</td><td class="num">${fmt(entitlement(e))}${getOverride(e)!==null?' <span class="tag">custom</span>':''}</td><td>${status}</td></tr>`}).join('')}</tbody>
     </table></div>`;
   bindControls(r=>{renderPeople();if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
   document.getElementById('addP').onclick=()=>openEmployee(null);
   main.querySelectorAll('tr[data-edit]').forEach(tr=>tr.onclick=()=>openEmployee(tr.dataset.edit));
 }
 function openEmployee(id){
-  const e=id?emp(id):{name:'',category:'MergAd',manager:'',doj:TODAY.startsWith(String(data.year))?TODAY:`${data.year}-01-01`,lwd:null,note:''};
+  const e=id?emp(id):{name:'',category:'MergAd',manager:'',doj:TODAY.startsWith(String(data.year))?TODAY:`${data.year}-01-01`,lwd:null,email:'',note:''};
   showDlg(`
     <div class="dlg-head"><h2>${id?'Edit '+esc(e.name):'Add person'}</h2><button class="x" data-close aria-label="Close">×</button></div>
     <div class="dlg-body"><div class="form">
@@ -1012,6 +1051,7 @@ function openEmployee(id){
       <div class="field"><label for="eD">Date of joining</label><input type="date" id="eD" value="${e.doj}"></div>
       <div class="field"><label for="eL">Last working day</label><input type="date" id="eL" value="${e.lwd||''}"><small>Leave empty while they work here.</small></div>
       <div class="field full"><label for="eO">Leave days for ${data.year}</label><input type="number" id="eO" step="0.5" min="0" value="${id&&getOverride(e)!==null?getOverride(e):''}" placeholder="Automatic"><small>Applies to ${data.year} only. Each new year starts again from the automatic allowance.</small><small id="eAuto"></small></div>
+      <div class="field full"><label for="eE">Work email</label><input id="eE" type="email" value="${esc(e.email||'')}" placeholder="name@company.com"><small>Lets this person sign in and see their own attendance.</small></div>
       <div class="field full"><label for="eNote">Note</label><input id="eNote" value="${esc(e.note)}"></div>
     </div></div>
     <div class="dlg-foot">${id?'<button class="btn danger" id="eDel" style="margin-right:auto">Delete person</button>':''}<button class="btn" data-close>Cancel</button><button class="btn primary" id="eSave">${id?'Save changes':'Add person'}</button></div>`,true);
@@ -1025,7 +1065,9 @@ function openEmployee(id){
     if(lwd&&lwd<doj){alert('The last working day is before the joining date.');return}
     snapshot();
     const o=$('eO').value.trim();
-    const rec={name,category:$('eC').value.trim(),manager:$('eM').value.trim(),doj,lwd,note:$('eNote').value.trim()};
+    const email=$('eE').value.trim().toLowerCase();
+    if(email&&data.employees.some(x=>x.id!==id&&(x.email||'').toLowerCase()===email)){alert(`${email} is already used by someone else in People.`);return}
+    const rec={name,category:$('eC').value.trim(),manager:$('eM').value.trim(),doj,lwd,email,note:$('eNote').value.trim()};
     let eid=id;
     if(id) Object.assign(emp(id),rec);
     else{let n=data.employees.length+1,nid;do{nid='e'+pad(n++)}while(emp(nid));data.employees.push(Object.assign({id:nid},rec));data.attendance[nid]={};eid=nid}
@@ -1066,12 +1108,30 @@ function renderHolidays(){
           <p>Leave taken beyond the allowance is counted as loss of pay, which lowers salary days.</p>
         </div>
         <div class="card panel" style="margin-top:16px">
+          <h2>Who can edit</h2>
+          ${admins().length?`<p>Only these people can make changes. Everyone else who signs in sees just their own attendance, view only.</p>
+          <ul class="admins">${admins().map(a=>`<li><span>${esc(a)}${a===myEmail()?' (you)':''}</span><button class="btn small danger" data-adm="${esc(a)}">Remove</button></li>`).join('')}</ul>`
+          :`<p class="warn-text">Right now anyone who signs in can edit. Add yourself as an admin to make the page view only for everyone else.</p>`}
+          <div class="row"><div class="field"><label for="admE">Admin's work email</label><input id="admE" type="email" placeholder="name@company.com"></div></div>
+          <div class="row"><button class="btn primary" id="admAdd">Add admin</button>${admins().includes(myEmail())?'':`<button class="btn" id="admMe">Add me (${esc(myEmail())})</button>`}</div>
+        </div>
+        <div class="card panel" style="margin-top:16px">
           <h2>Backup copy</h2>
           <p>Attendance saves to SharePoint automatically, and SharePoint keeps every earlier version in Version history. Download a copy if you want your own backup.</p>
           <div class="row"><button class="btn" id="dlCopy">Download a copy</button><button class="btn" id="ldCopy">Load a copy…</button></div>
         </div>
       </div>
     </div>`;
+  const addAdmin=em=>{em=(em||'').trim().toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){alert('Enter a valid work email.');return}
+    if(admins().includes(em))return; const first=!admins().length;
+    if(first&&em!==myEmail()&&!confirm(`You aren't on the list. After adding ${em}, you won't be able to edit anymore. Continue?`))return;
+    snapshot(); data.settings.admins=[...admins(),em]; changed(); render(); toast(`${em} can now edit.`,true)};
+  document.getElementById('admAdd').onclick=()=>addAdmin(document.getElementById('admE').value);
+  const am=document.getElementById('admMe'); if(am) am.onclick=()=>addAdmin(myEmail());
+  main.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{const em=b.dataset.adm;const rest=admins().filter(a=>a!==em);
+    if(em===myEmail()&&rest.length&&!confirm('Remove yourself? You will no longer be able to edit.'))return;
+    if(!rest.length&&!confirm('Removing the last admin lets everyone who signs in edit again. Continue?'))return;
+    snapshot(); data.settings.admins=rest; changed(); render(); toast(`${em} removed from admins.`,true)});
   document.getElementById('dlCopy').onclick=downloadCopy;
   document.getElementById('ldCopy').onclick=()=>document.getElementById('fileInput').click();
   main.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
