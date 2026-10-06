@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MergAd Attendance 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEFEA; --surface:#FFFFFF; --surface-2:#F6F8F4; --ink:#16202A; --muted:#5A6570; --line:#D3D9D0; --line-2:#E4E8E1;
+  --wfo:#D2E7DD; --wfo-ink:#1F5E4F; --wfh:#D8DCF5; --wfh-ink:#3443A3; --lve:#E9A215; --lve-ink:#3A2700;
+  --bt:#ECD9EF; --bt-ink:#76367F; --lop:#C4412C; --lop-ink:#FFFFFF; --hol:#DDE1DA; --hol-stripe:#CBD0C7;
+  --focus:#3443A3; --maroon:#8B1E2D; --today:#FFF4D1; --today-line:#E0A21B; --danger:#B3361F; --ok:#2F7D63;
+  --radius-s:4px; --radius-m:8px;
+  font-family:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size:15px; color:var(--ink); background:var(--bg);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161B; --surface:#1A2128; --surface-2:#151B21; --ink:#E6EAE4; --muted:#9AA5AE; --line:#2C363F; --line-2:#232C34;
+    --wfo:#24453B; --wfo-ink:#BFE6D6; --wfh:#2B3263; --wfh-ink:#C9CFFA; --lve:#E9A215; --lve-ink:#2A1C00;
+    --bt:#47294D; --bt-ink:#F0CCF6; --hol:#242C33; --hol-stripe:#2E3840; --focus:#8E9BFF; --maroon:#E8939E; --today:#3A3014; --today-line:#E9A215;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161B; --surface:#1A2128; --surface-2:#151B21; --ink:#E6EAE4; --muted:#9AA5AE; --line:#2C363F; --line-2:#232C34;
+  --wfo:#24453B; --wfo-ink:#BFE6D6; --wfh:#2B3263; --wfh-ink:#C9CFFA; --bt:#47294D; --bt-ink:#F0CCF6; --hol:#242C33; --hol-stripe:#2E3840; --focus:#8E9BFF; --maroon:#E8939E; --today:#3A3014; --today-line:#E9A215;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.45;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Top bar */
+.top{display:flex;align-items:center;gap:16px;flex-wrap:nowrap;padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:8px;margin-right:8px}
+.brand b{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-weight:500}
+.year-sel{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:2px 6px;font-weight:600;font-size:15px;cursor:pointer}
+nav.tabs{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:var(--radius-m);padding:3px}
+nav.tabs button{border:0;background:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:500;color:var(--muted)}
+nav.tabs button[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.filebar{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-width:0}
+.top>.brand,.top>nav.tabs{flex-shrink:0}
+.status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+.status span{overflow:hidden;text-overflow:ellipsis;max-width:320px}
+.status.bad i{background:var(--lop)} .status.bad{color:var(--lop)}
+.me{display:flex;align-items:center;gap:8px;font-size:14px;white-space:nowrap}
+.me .av{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--surface);display:grid;place-items:center;font-size:12px;font-weight:700}
+body.gated nav.tabs,body.gated #yearSel{visibility:hidden}
+.gate{max-width:500px;margin:70px auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:30px 32px}
+.gate h2{font-size:22px;margin:0 0 8px}
+.gate p{color:var(--muted);margin:0 0 20px}
+.gate .btns{display:flex;gap:8px;flex-wrap:wrap}
+.status i{flex-shrink:0}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.status.dirty i{background:var(--lve)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:var(--radius-m);cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn.primary:hover{opacity:.9}
+.btn.small{padding:4px 9px;font-size:13px}
+.btn.danger{color:var(--danger)}
+.btn.link{border:0;background:none;padding:0;color:var(--wfh-ink);text-decoration:underline;text-underline-offset:2px}
+
+main{padding:24px;max-width:1500px;margin:0 auto}
+h1{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0}
+h2{font-size:18px;font-weight:600;margin:0}
+.sub{color:var(--muted);margin:4px 0 0}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.controls input[type=search],.controls select,.field input,.field select{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-m);padding:7px 10px;min-width:0}
+.check{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+
+/* Today strip */
+.today{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-m);padding:14px 18px;margin-bottom:18px;display:flex;gap:28px;flex-wrap:wrap;align-items:center}
+.today .when{font-weight:600}
+.today .tally{display:flex;gap:22px;flex-wrap:wrap}
+.tally div{display:flex;align-items:baseline;gap:6px}
+.tally strong{font-size:22px;font-weight:700}
+.tally span{color:var(--muted);font-size:14px}
+.today .names{color:var(--muted);font-size:14px;flex-basis:100%;margin-top:-10px}
+
+/* Balance table */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-m)}
+.scroll-x{overflow-x:auto}
+table.list{border-collapse:collapse;width:100%;min-width:860px}
+table.list th,table.list td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:middle}
+table.list thead th{font-size:13px;font-weight:600;color:var(--muted);background:var(--surface-2);position:sticky;top:0}
+table.list th.num,table.list td.num{text-align:right}
+table.list tbody tr{cursor:pointer}
+table.list tbody tr:hover{background:var(--surface-2)}
+table.list tbody tr:last-child td{border-bottom:0}
+.who b{display:block;font-weight:600}
+.who small{color:var(--muted);font-size:13px}
+.who small.meta{display:flex;gap:16px;flex-wrap:wrap}
+.pending{font-size:20px;font-weight:700}
+.pending.low{color:var(--danger)}
+.tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:500}
+.meter{display:flex;gap:2px;flex-wrap:nowrap}
+.meter i{display:block;width:9px;height:16px;border-radius:2px;border:1px solid var(--line);background:var(--surface)}
+.meter i.half{width:5px}
+.meter i.over{background:var(--lop);border-color:var(--lop)}
+.meter-wrap small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable[aria-sort]::after{content:" ▾";font-size:11px}
+th.sortable[aria-sort="ascending"]::after{content:" ▴"}
+
+/* Register */
+.toolbar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.months{display:flex;gap:2px;flex-wrap:wrap}
+.months button{border:1px solid transparent;background:none;padding:5px 10px;border-radius:6px;cursor:pointer;color:var(--muted);font-weight:500}
+.months button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.months button.future{opacity:.55}
+.brushes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.brush{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);padding:5px 10px 5px 6px;border-radius:var(--radius-m);cursor:pointer;font-weight:500;font-size:14px}
+.brush .sw{width:18px;height:18px;border-radius:3px;display:grid;place-items:center;font-size:11px;font-weight:700}
+.brush[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+kbd{font:inherit;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+.reg-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin-bottom:8px}
+.reg-bar .controls{margin-left:auto}
+.reg-bar .controls input[type=search],.reg-bar .controls select,.reg-bar .btn{padding:3px 9px;font-size:13px;height:28px}
+.reg-bar .controls input[type=search]{width:150px}
+.reg-bar .controls select{max-width:130px}
+.reg-bar .controls{gap:6px}
+.reg-title{font-size:20px;margin-right:4px;white-space:nowrap}
+.reg-title span{color:var(--muted);font-weight:500}
+.reg-bar .months button{padding:4px 8px;font-size:14px}
+.reg-bar .brush{padding:3px 9px 3px 4px;font-size:13px;height:28px}
+.reg-bar .brushes{gap:5px}
+.reg-bar .brush .sw{width:16px;height:16px}
+.reg-info{margin-left:auto;color:var(--muted);font-size:13px;white-space:nowrap}
+main.reg{padding:12px 20px 12px;max-width:none;display:flex;flex-direction:column;height:calc(100dvh - var(--top-h,56px))}
+main.reg .grid-wrap{flex:1 1 auto;max-height:none;min-height:240px}
+.grid-wrap{overflow:auto;max-height:calc(100vh - 250px);min-height:300px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-m)}
+table.grid{border-collapse:separate;border-spacing:0;font-size:12px}
+table.grid th,table.grid td{padding:0;border-bottom:1px solid var(--line-2)}
+table.grid thead th{position:sticky;top:0;background:var(--surface);z-index:3;border-bottom:2px solid var(--line);height:52px;vertical-align:middle}
+table.grid .nm{position:sticky;left:0;background:var(--surface);z-index:2;text-align:left;padding:4px 12px;min-width:190px;max-width:190px;border-right:1px solid var(--line)}
+table.grid thead .nm{z-index:4;font-size:13px;color:var(--muted);font-weight:600}
+.nm button{border:0;background:none;padding:0;cursor:pointer;font-weight:600;text-align:left;font-size:13px;display:block;max-width:166px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm button:hover{text-decoration:underline}
+.nm small{color:var(--muted);font-size:11px;display:block}
+th.day{width:29px;min-width:29px;cursor:pointer;padding:0;text-align:center}
+th.day .dn{display:block;font-size:14px;font-weight:700;line-height:1.1;color:var(--ink)}
+th.day .wd{display:block;font-size:10.5px;font-weight:500;line-height:1.2;margin-top:2px;color:var(--muted)}
+th.day.we,th.day.ph{background:var(--surface-2)}
+th.day.we .dn,th.day.we .wd,th.day.ph .dn,th.day.ph .wd{color:var(--maroon)}
+th.day:hover{background:var(--line-2)}
+th.day.now{background:var(--today-line);box-shadow:inset 0 -2px 0 var(--today-line)}
+th.day.now .dn,th.day.now .wd{color:#2A1C00}
+th.day.now .wd::after{content:"";display:block;width:4px;height:4px;border-radius:50%;background:#2A1C00;margin:2px auto 0}
+td.d{width:29px;min-width:29px;padding:2px 1px}
+td.d.we,td.d.ph{background:var(--surface-2)}
+td.d.now{background:var(--today);position:relative}
+td.d.now::after{content:"";position:absolute;top:0;bottom:-1px;left:0;right:0;border-left:2px solid var(--today-line);border-right:2px solid var(--today-line);pointer-events:none;z-index:1}
+.h{height:14px;margin:1px 1px;border-radius:2px;cursor:pointer;display:grid;place-items:center;font-size:9px;font-weight:700;line-height:1;user-select:none;border:1px solid var(--line-2);background:var(--surface)}
+.h:hover{outline:2px solid var(--focus);outline-offset:0}
+.h.WFO{background:var(--wfo);color:var(--wfo-ink);border-color:transparent}
+.h.WFH{background:var(--wfh);color:var(--wfh-ink);border-color:transparent}
+.h.LVE{background:var(--lve);color:var(--lve-ink);border-color:transparent}
+.h.BT{background:var(--bt);color:var(--bt-ink);border-color:transparent}
+.h.LOP{background:var(--lop);color:var(--lop-ink);border-color:transparent}
+.h.HOL{background:repeating-linear-gradient(135deg,var(--hol) 0 3px,var(--hol-stripe) 3px 5px);border-color:transparent}
+.h.blank-due{border-color:var(--lve);border-style:dashed}
+.h.off{background:none;border:0;cursor:not-allowed;outline:0}
+.h.off::after{content:"";width:60%;height:1px;background:var(--line)}
+.sw.WFO{background:var(--wfo);color:var(--wfo-ink)}.sw.WFH{background:var(--wfh);color:var(--wfh-ink)}.sw.LVE{background:var(--lve);color:var(--lve-ink)}
+.sw.BT{background:var(--bt);color:var(--bt-ink)}.sw.LOP{background:var(--lop);color:var(--lop-ink)}
+.sw.HOL{background:repeating-linear-gradient(135deg,var(--hol) 0 3px,var(--hol-stripe) 3px 5px)}
+.sw.CLR{background:var(--surface);border:1px dashed var(--muted)}
+th.s,td.s{width:74px;min-width:74px;max-width:74px;text-align:right;padding:4px 10px;font-size:13px;border-left:1px solid var(--line-2)}
+th.s{font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.25;white-space:normal;text-align:right}
+th.s.first,td.s.first{border-left:1px solid var(--line)}
+td.s.key{font-weight:700}
+td.s.neg{color:var(--danger);font-weight:700}
+td.s.lop{color:var(--lop);font-weight:700}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+
+/* Dialogs */
+dialog{border:1px solid var(--line);border-radius:12px;padding:0;background:var(--surface);color:var(--ink);max-width:min(860px,calc(100vw - 24px));width:100%;max-height:calc(100vh - 40px)}
+dialog.narrow{max-width:min(500px,calc(100vw - 24px))}
+dialog::backdrop{background:rgba(16,22,28,.45)}
+.dlg-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px 22px 12px;border-bottom:1px solid var(--line-2)}
+.dlg-body{padding:18px 22px;overflow:auto}
+.dlg-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid var(--line-2)}
+.x{border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 6px}
+.facts{color:var(--muted);font-size:14px;margin-top:4px}
+.bignums{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:18px}
+.bignums div{display:flex;flex-direction:column}
+.bignums strong{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.bignums span{color:var(--muted);font-size:13px}
+.explain{background:var(--surface-2);border-radius:var(--radius-m);padding:10px 14px;font-size:14px;color:var(--muted);margin-bottom:18px}
+table.mini{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+table.mini th,table.mini td{padding:7px 10px;border-bottom:1px solid var(--line-2);text-align:right}
+table.mini th:first-child,table.mini td:first-child{text-align:left}
+table.mini thead th{font-size:12px;color:var(--muted);font-weight:600}
+table.mini tfoot td{font-weight:700;border-bottom:0}
+table.mini tr.na td{color:var(--line)}
+.leave-dates{margin-top:18px}
+.leave-dates p{margin:4px 0;font-size:14px}
+.leave-dates b{display:inline-block;min-width:40px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:13px;font-weight:600}
+.field small{color:var(--muted);font-size:12px}
+.field.full{grid-column:1/-1}
+.preview{grid-column:1/-1;background:var(--surface-2);border-radius:var(--radius-m);padding:10px 14px;font-size:14px}
+.preview.warn{background:#FBE9E5;color:#7A2414}
+
+/* People & holidays */
+.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:20px;align-items:start}
+.panel{padding:18px 20px}
+.panel p{margin:8px 0;font-size:14px;color:var(--muted)}
+.panel .row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}
+.panel .row .field{flex:1;min-width:110px}
+.status-pill{font-size:12px;padding:2px 8px;border-radius:20px;background:var(--wfo);color:var(--wfo-ink);font-weight:600}
+.status-pill.left{background:var(--hol);color:var(--muted)}
+.status-pill.soon{background:var(--wfh);color:var(--wfh-ink)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 14px 10px 18px;border-radius:var(--radius-m);display:flex;gap:14px;align-items:center;z-index:60;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.toast button{background:none;border:1px solid rgba(255,255,255,.35);color:inherit;border-radius:6px;padding:3px 10px;cursor:pointer}
+.toast[hidden]{display:none}
+.banner{background:var(--surface);border:1px solid var(--lve);border-left-width:4px;border-radius:var(--radius-m);padding:12px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}
+.banner p{margin:0;flex:1;min-width:240px}
+
+@media (max-width:820px){
+  .top{padding:10px 14px;gap:10px;position:static;flex-wrap:wrap}
+  main{padding:14px}
+  .two{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .filebar{margin-left:0}
+  .grid-wrap{max-height:none}
+  main.reg{height:auto}
+  main.reg .grid-wrap{max-height:75vh}
+  .reg-info{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body class="gated">
+<header class="top">
+  <div class="brand"><b>MergAd attendance</b><select id="yearSel" class="year-sel" aria-label="Year"></select></div>
+  <nav class="tabs" aria-label="Sections">
+    <button data-view="balances">Leave balances</button>
+    <button data-view="register">Monthly register</button>
+    <button data-view="people">People</button>
+    <button data-view="holidays">Holidays &amp; policy</button>
+  </nav>
+  <div class="filebar">
+    <span class="status" id="status" role="status"><i></i><span></span></span>
+    <span class="me" id="me" hidden><span class="av" id="avatar"></span><span id="meName"></span><button class="btn small" id="signOut">Sign out</button></span>
+    <input type="file" id="fileInput" accept=".json,application/json" hidden>
+  </div>
+</header>
+<main id="main"></main>
+
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden><span></span><button id="toastUndo">Undo</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.30.0/lib/msal-browser.min.js" crossorigin="anonymous"></script>
+<script type="application/json" id="seed">{"app":"MergAd Attendance","version":2,"year":2026,"settings":{"annualLeave":24,"midMonthCutoff":15},"employees":[{"id":"e01","name":"R.Suraj","category":"MergAd","manager":"MK","doj":"2018-02-01","lwd":null,"note":""},{"id":"e02","name":"P.Vijay Bharathi","category":"MergAd","manager":"MK","doj":"2018-04-01","lwd":null,"note":""},{"id":"e03","name":"Sridevi B Srinivasan","category":"MergAd","manager":"MK","doj":"2018-04-01","lwd":null,"note":""},{"id":"e04","name":"Maria Ignatius Ephrem J","category":"MergAd","manager":"Vijay","doj":"2019-04-08","lwd":null,"note":""},{"id":"e05","name":"Ankit Manocha","category":"MergAd","manager":"MK","doj":"2019-05-27","lwd":"2026-04-29","note":""},{"id":"e06","name":"Srikanth Venkataraman","category":"MergAd","manager":"Vijay","doj":"2022-04-04","lwd":null,"note":""},{"id":"e07","name":"Hariprasath","category":"MergAd","manager":"Vijay","doj":"2022-08-26","lwd":"2026-08-31","note":""},{"id":"e08","name":"Hemanth P","category":"MergAd","manager":"Suraj","doj":"2023-01-23","lwd":null,"note":""},{"id":"e09","name":"Magesh","category":"MergAd","manager":"Vijay","doj":"2024-02-12","lwd":null,"note":""},{"id":"e10","name":"Mohammed Suhail","category":"MergAd","manager":"Suraj","doj":"2024-05-27","lwd":"2026-06-12","note":"10 day leave taken till May 2026"},{"id":"e11","name":"Karthik","category":"MergAd","manager":"MK","doj":"2024-07-01","lwd":"2026-03-17","note":""},{"id":"e12","name":"Nanditha","category":"MergAd","manager":"Suraj","doj":"2024-07-03","lwd":null,"note":""},{"id":"e13","name":"Oviyaa","category":"MergAd","manager":"Sridevi","doj":"2024-08-12","lwd":null,"note":""},{"id":"e14","name":"Nijara Banu","category":"MergAd","manager":"Vijay","doj":"2025-01-02","lwd":null,"note":""},{"id":"e15","name":"Soumia Suyamprakasham","category":"Contract","manager":"Sridevi","doj":"2024-02-22","lwd":"2026-08-28","note":""},{"id":"e16","name":"Gopalakrishnan S","category":"MergAd","manager":"Sridevi","doj":"2025-01-06","lwd":null,"note":""},{"id":"e17","name":"Devansh Singh","category":"MergAd","manager":"Sridevi","doj":"2025-04-07","lwd":null,"note":""},{"id":"e18","name":"Pavithra R","category":"MergAd","manager":"Vijay","doj":"2025-04-15","lwd":"2026-09-30","note":""},{"id":"e19","name":"Ramya S","category":"MergAd","manager":"Suraj","doj":"2025-05-12","lwd":"2026-03-10","note":""},{"id":"e20","name":"Divyansh Sharma","category":"MergAd","manager":"Sridevi","doj":"2025-05-19","lwd":"2026-03-19","note":""},{"id":"e21","name":"Mehul Agarwal","category":"MergAd","manager":"Prabhu","doj":"2025-06-23","lwd":null,"note":""},{"id":"e22","name":"Vishva","category":"MergAd","manager":"Vijay","doj":"2025-12-18","lwd":null,"note":""},{"id":"e23","name":"Iman Mazumder","category":"MergAd","manager":"Vijay","doj":"2026-01-05","lwd":null,"note":""},{"id":"e24","name":"George M Kolethu","category":"MergAd","manager":"Vijay","doj":"2026-01-12","lwd":"2026-02-19","note":""},{"id":"e25","name":"Immanuel Mathew Joseph","category":"MergAd","manager":"Vijay","doj":"2026-01-12","lwd":null,"note":""},{"id":"e26","name":"Durga Babu","category":"MergAd","manager":"Vijay","doj":"2026-01-19","lwd":null,"note":""},{"id":"e27","name":"Vaibhav","category":"MergAd","manager":"Sridevi","doj":"2026-02-05","lwd":null,"note":""},{"id":"e28","name":"Bharath","category":"MergAd","manager":"MK","doj":"2026-02-13","lwd":"2026-07-06","note":""},{"id":"e29","name":"Karthik Srinivas K","category":"MergAd","manager":"Vijay","doj":"2026-05-18","lwd":null,"note":""},{"id":"e30","name":"Girish Ramanee","category":"MergAd","manager":"Suraj","doj":"2026-06-10","lwd":"2026-08-11","note":""},{"id":"e31","name":"Karishma Lourdes","category":"MergAd","manager":"Vijay","doj":"2026-06-15","lwd":null,"note":""},{"id":"e32","name":"Aarav Singh","category":"MergAd","manager":"Suraj","doj":"2026-07-23","lwd":null,"note":""},{"id":"e33","name":"Ankur Malik","category":"MergAd","manager":"Vijay","doj":"2026-09-21","lwd":null,"note":""}],"savedAt":"2026-10-06T07:29:17","nameCaseVersion":1,"years":{"2026":{"holidays":[{"date":"2026-01-01","name":"New Year's Day"},{"date":"2026-01-15","name":"Pongal"},{"date":"2026-01-26","name":"Republic Day"},{"date":"2026-04-23","name":"Additional holiday (marked in the sheet)"},{"date":"2026-05-01","name":"May Day"},{"date":"2026-05-28","name":"Bakrid (Id-ul-Zuha)"},{"date":"2026-10-02","name":"Gandhi Jayanti"},{"date":"2026-10-19","name":"Ayudha Pooja"},{"date":"2026-10-20","name":"Vijayadashami"},{"date":"2026-11-09","name":"Diwali/Deepavali"},{"date":"2026-12-25","name":"Christmas"}],"attendance":{"e01":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL"],"2026-06":["WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e02":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["BT","BT","BT","BT","BT","BT","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e03":{"2026-01":["HOL","HOL","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFO","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFO","WFO","WFO","HOL","HOL","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFH","WFO","WFO","WFH","WFO","WFH","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFH","WFH","WFH","WFO","WFH","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","BT","BT","BT","BT","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","LVE","LVE","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFH","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH"],"2026-04":["WFO","WFO","WFO","WFO","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFH","WFH","WFH","WFH","WFH","WFH","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFO","WFO","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFH","WFO","WFO","WFH","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFH","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","BT","BT","BT","BT","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","BT","BT","WFH","WFH"],"2026-07":["WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","BT","BT","BT","BT","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFH","WFO","WFH"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFO","WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e04":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO",null,null,"HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e05":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO",null,null]},"e06":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO",null,null,"HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL",null,null,null,null],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e07":{"2026-01":["HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["BT","BT","BT","BT","BT","BT","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"]},"e08":{"2026-01":["HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","LVE","WFH","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFH","WFH","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","LVE","LVE","LVE","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e09":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e10":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFH","WFH","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null]},"e11":{"2026-01":["HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL"],"2026-02":["HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null]},"e12":{"2026-01":["HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","WFH","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE","WFH","WFH","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","LVE","LVE"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","WFO","WFH","WFH","WFH","WFH","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFH","WFH","WFH","WFH","LVE","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE"],"2026-09":["WFH","LVE","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e13":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFO","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH"],"2026-07":["LVE","LVE","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["LVE","LVE","LVE","LVE","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","LVE"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e14":{"2026-01":["HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","LVE","WFH","WFO","WFH","WFO","WFH","HOL","HOL","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFH","WFH","LVE","LVE","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFH","LVE","LVE","WFO","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFH","WFH","WFO","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFH","WFH","WFH","WFO","WFH","WFO","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFO","WFO","WFH","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","LVE","LVE","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["WFH","WFH","WFH","LVE","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH",null,null,"WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH"],"2026-07":["WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFO","LVE","WFO","LVE","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFO","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFO","WFO","WFH","WFO","WFH"],"2026-08":["HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","LVE","LVE","WFO","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","LVE","LVE"],"2026-09":["LVE","LVE","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH","LVE","LVE","WFO","WFH","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH","WFO","WFH"],"2026-10":["WFO","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFH",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e15":{"2026-01":["HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL"],"2026-02":["HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","LVE","LVE","HOL","HOL"],"2026-03":["HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO"],"2026-04":["WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","LVE","LVE","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFH","WFH","WFH","WFH","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE","WFH","WFH","LVE","LVE","LVE","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO"],"2026-07":["WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFH","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH"],"2026-08":["HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL",null,null]},"e16":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","LVE","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFH","WFO"],"2026-07":["WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE"],"2026-09":["LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","WFO","WFO","WFO","WFH","WFH"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e17":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","LVE","LVE","WFH","WFH","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","LVE","LVE","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFH","WFH","HOL","HOL","WFH","WFH","HOL","HOL","HOL","HOL"],"2026-06":["WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","LVE","LVE","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH"],"2026-08":["HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH"],"2026-09":["WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e18":{"2026-01":["HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL"],"2026-02":["HOL","HOL","WFH","WFH","WFO","WFO","LVE","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","LVE","LVE","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE","WFH","WFH","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","LVE","LVE","LVE","WFH","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","LVE","LVE","LVE","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"]},"e19":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null]},"e20":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE",null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null]},"e21":{"2026-01":["HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFH","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFH","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO",null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e22":{"2026-01":["HOL","HOL","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","LVE","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e23":{"2026-01":[null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO",null,null,"HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e24":{"2026-01":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO",null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"]},"e25":{"2026-01":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e26":{"2026-01":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-02":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","LVE","LVE","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFH","WFH","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFO","WFO","WFO","WFO",null,null,"HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","LVE","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e27":{"2026-02":["HOL","HOL",null,null,null,null,null,null,"WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","HOL","HOL","HOL","HOL","WFH","WFH","LVE","LVE"],"2026-07":["WFH","WFH","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","LVE","LVE","WFH","LVE","LVE","LVE","HOL","HOL","HOL","HOL","LVE","LVE","WFH","WFH","WFH","WFH","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e28":{"2026-02":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL"],"2026-03":["HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-04":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-05":["HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFH","WFH","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","WFO","WFO","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO",null,"HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO",null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null]},"e29":{"2026-05":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","LVE","LVE","HOL","HOL","HOL","HOL"],"2026-06":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO"],"2026-07":["WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","LVE","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFH","WFH","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e30":{"2026-06":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["LVE","LVE","LVE","LVE","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","LVE","LVE","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"e31":{"2026-06":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO"],"2026-07":["LVE","LVE","LVE","LVE","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFH","WFH","WFH","WFH","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","LVE","LVE","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","LVE","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","LVE","LVE","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e32":{"2026-07":[null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,"WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-08":["HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO"],"2026-09":["WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]},"e33":{"2026-09":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","WFO","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO","WFO","WFO"],"2026-10":["WFO","WFO","HOL","HOL","HOL","HOL","HOL","HOL","WFO","WFO","WFO","WFO",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL","HOL","HOL","HOL","HOL","HOL","HOL",null,null,null,null,null,null,"HOL","HOL","HOL","HOL",null,null,null,null,null,null,null,null,null,null,"HOL","HOL"],"2026-11":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"2026-12":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"HOL","HOL",null,null,null,null,null,null,null,null,null,null,null,null]}},"leaveOverrides":{},"holidayListVersion":2}}}</script>
+<script>
+(() => {
+'use strict';
+/* ---------- constants ---------- */
+const CODES = {
+  WFO:{label:'Office', letter:'O', help:'Worked from office'},
+  WFH:{label:'Work from home', letter:'H', help:'Worked from home'},
+  LVE:{label:'Leave', letter:'L', help:'Paid leave, uses the leave balance'},
+  BT: {label:'Business travel', letter:'T', help:'Counts as office (the sheet added BT to Total WFO)'},
+  LOP:{label:'Loss of pay', letter:'P', help:'Unpaid absence, reduces salary days'},
+  HOL:{label:'Holiday', letter:'', help:'Weekend or public holiday'},
+};
+const BRUSHES = ['WFO','WFH','LVE','BT','LOP','HOL','CLR'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MON = MONTHS.map(m=>m.slice(0,3));
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const now = new Date();
+const TODAY = isoOf(now.getFullYear(), now.getMonth()+1, now.getDate());
+
+/* ---------- state ---------- */
+let data = null;
+const st = { view:'balances', month:null, brush:'WFO', q:'', mgr:'', former:false, sort:'order', sortDir:1, dirty:false, undo:[] };
+
+/* ---------- helpers ---------- */
+function pad(n){return String(n).padStart(2,'0')}
+function isoOf(y,m,d){return `${y}-${pad(m)}-${pad(d)}`}
+function ymOf(m){return `${data.year}-${pad(m)}`}
+function dim(ym){const [y,m]=ym.split('-').map(Number);return new Date(Date.UTC(y,m,0)).getUTCDate()}
+function dow(iso){const [y,m,d]=iso.split('-').map(Number);return new Date(Date.UTC(y,m-1,d)).getUTCDay()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){if(n==null||n==='')return '';const r=Math.round(n*100)/100;return Number.isInteger(r)?String(r):String(r)}
+function nice(iso){if(!iso)return '';const [y,m,d]=iso.split('-').map(Number);return `${d} ${MON[m-1]} ${y}`}
+function niceShort(iso){const [,m,d]=iso.split('-').map(Number);return `${WD[dow(iso)]} ${d} ${MON[m-1]}`}
+function holMap(){const m={};(data.holidays||[]).forEach(h=>m[h.date]=h.name);return m}
+let HOLS = {};
+function isWeekend(iso){const w=dow(iso);return w===0||w===6}
+function isOffDay(iso){return isWeekend(iso)||!!HOLS[iso]}
+function emp(id){return data.employees.find(e=>e.id===id)}
+function isActive(e,iso){return iso>=e.doj && (!e.lwd || iso<=e.lwd)}
+function activeInMonth(e,ym){const s=ym+'-01', en=ym+'-'+pad(dim(ym));return e.doj<=en && (!e.lwd || e.lwd>=s)}
+function arr(eid,ym,create){
+  const a=data.attendance[eid]||(create?(data.attendance[eid]={}):null); if(!a) return null;
+  if(!a[ym] && create) a[ym]=new Array(dim(ym)*2).fill(null);
+  return a[ym]||null;
+}
+function managers(){return [...new Set(data.employees.map(e=>e.manager).filter(Boolean))].sort((a,b)=>a.localeCompare(b))}
+
+/* ---------- leave rules ---------- */
+function autoEntitlement(e){
+  const Y=data.year, A=+data.settings.annualLeave||24, cut=+data.settings.midMonthCutoff||15;
+  const [y,m,d]=e.doj.split('-').map(Number);
+  if(y<Y) return A; if(y>Y) return 0;
+  const per=A/12;
+  return (12-m)*per + (d<=cut?per:per/2);
+}
+function getOverride(e){const v=data.leaveOverrides[e.id];return (v===undefined||v===null||v===''||isNaN(+v))?null:+v}
+function entitlement(e){
+  if(e.id&&getOverride(e)!==null) return getOverride(e);
+  return autoEntitlement(e);
+}
+function entitlementWhy(e){
+  if(getOverride(e)!==null) return `Set manually to ${fmt(getOverride(e))} days (automatic rule would give ${fmt(autoEntitlement(e))}).`;
+  const Y=data.year, A=+data.settings.annualLeave, cut=+data.settings.midMonthCutoff;
+  const [y,m,d]=e.doj.split('-').map(Number);
+  if(y<Y) return `Joined before ${Y}, so the full ${fmt(A)} days apply.`;
+  const per=A/12, rest=12-m;
+  return `Joined ${nice(e.doj)}: ${fmt(per)} days for each of the ${rest} months after ${MONTHS[m-1]}, plus ${fmt(d<=cut?per:per/2)} for ${MONTHS[m-1]} itself (${d<=cut?'joined on or before':'joined after'} the ${cut}th) = ${fmt(entitlement(e))} days.`;
+}
+
+function monthCounts(e,ym){
+  const a=arr(e.id,ym,false), n=dim(ym);
+  const c={WFO:0,WFH:0,LVE:0,BT:0,LOP:0,HOL:0,active:0,unmarked:0};
+  for(let d=1;d<=n;d++){
+    const iso=`${ym}-${pad(d)}`; if(!isActive(e,iso)) continue; c.active++;
+    for(let k=0;k<2;k++){
+      const v=a?a[(d-1)*2+k]:null;
+      if(v && c[v]!==undefined) c[v]++;
+      else if(!v && !isOffDay(iso) && iso<=TODAY) c.unmarked++;
+    }
+  }
+  return c;
+}
+/* Mirrors the sheet columns:
+   Leave Available = entitlement - leaves taken in earlier months
+   Total Leaves    = LVE half-days / 2
+   Leave Balance   = Leave Available - Total Leaves
+   Total WFO       = (office + business-travel half-days) / 2
+   Total WFH       = WFH half-days / 2
+   Total LOP       = leave taken beyond the entitlement + days marked LOP
+   Salary Days     = calendar days employed in the month - LOP */
+function yearStats(e){
+  const ent=entitlement(e); let cum=0; const months=[]; const tot={lve:0,wfo:0,wfh:0,lop:0,salary:0,unmarked:0};
+  for(let m=1;m<=12;m++){
+    const ym=ymOf(m);
+    if(!activeInMonth(e,ym)){months.push(null);continue}
+    const c=monthCounts(e,ym);
+    const lve=c.LVE/2, avail=ent-cum, bal=avail-lve;
+    const lopLeave=Math.max(0,cum+lve-ent)-Math.max(0,cum-ent);
+    const lop=lopLeave+c.LOP/2;
+    const salary=c.active-lop;
+    const row={m,avail,lve,bal,wfo:(c.WFO+c.BT)/2,wfh:c.WFH/2,lop,salary,unmarked:c.unmarked/2,active:c.active};
+    months.push(row); cum+=lve;
+    tot.lve+=lve; tot.wfo+=row.wfo; tot.wfh+=row.wfh; tot.lop+=lop; tot.salary+=salary; tot.unmarked+=row.unmarked;
+  }
+  return {ent,taken:cum,pending:Math.max(0,ent-cum),over:Math.max(0,cum-ent),months,tot};
+}
+
+/* ---------- data integrity ---------- */
+function ensureHolidays(){
+  HOLS=holMap();
+  for(const e of data.employees){
+    for(let m=1;m<=12;m++){
+      const ym=ymOf(m); if(!activeInMonth(e,ym)) continue;
+      const a=arr(e.id,ym,true), n=dim(ym);
+      if(a.length!==n*2){a.length=n*2;for(let i=0;i<a.length;i++) if(a[i]===undefined) a[i]=null}
+      for(let d=1;d<=n;d++){
+        const iso=`${ym}-${pad(d)}`;
+        if(isActive(e,iso)&&isOffDay(iso)){ if(!a[(d-1)*2]) a[(d-1)*2]='HOL'; if(!a[(d-1)*2+1]) a[(d-1)*2+1]='HOL'; }
+      }
+    }
+  }
+}
+function validate(d){
+  if(!d||typeof d!=='object') return 'The file is not valid JSON data.';
+  if(!Array.isArray(d.employees)) return 'This file has no employees list, so it is not an attendance file.';
+  if(d.years){ if(typeof d.years!=='object') return 'The years section of this file is damaged.'; }
+  else { if(!d.attendance||typeof d.attendance!=='object') return 'This file has no attendance section.';
+         if(!d.year) return 'This file does not say which year it covers.'; }
+  return null;
+}
+const OFFICIAL_HOLIDAYS={2026:[
+  ['2026-01-01',"New Year's Day"],['2026-01-15','Pongal'],['2026-01-26','Republic Day'],['2026-05-01','May Day'],
+  ['2026-05-28','Bakrid (Id-ul-Zuha)'],['2026-10-02','Gandhi Jayanti'],['2026-10-19','Ayudha Pooja'],['2026-10-20','Vijayadashami'],
+  ['2026-11-09','Diwali/Deepavali'],['2026-12-25','Christmas']]};
+const HOLIDAY_LIST_VERSION=2;
+/* Adds the official government holiday list to data saved by an older version of this page. Runs once per file. */
+function mergeOfficialHolidays(d){
+  let changedAny=false;
+  Object.keys(OFFICIAL_HOLIDAYS).forEach(y=>{
+    const yo=d.years[y]; if(!yo||(yo.holidayListVersion||1)>=HOLIDAY_LIST_VERSION) return;
+    OFFICIAL_HOLIDAYS[y].forEach(([date,name])=>{const h=yo.holidays.find(x=>x.date===date); if(h) h.name=name; else yo.holidays.push({date,name})});
+    yo.holidays.sort((a,b)=>a.date.localeCompare(b.date));
+    yo.holidayListVersion=HOLIDAY_LIST_VERSION; changedAny=true;
+  });
+  return changedAny;
+}
+/* Version 2 file layout: one file holds every year.
+   { employees:[...shared...], settings, years:{ "2026":{holidays,attendance,leaveOverrides}, "2027":{...} }, year:<last viewed> }
+   Leave never carries forward: each year starts from the full allowance. */
+function upgrade(d){
+  let up=false;
+  if(!d.years){
+    const y=String(d.year||new Date().getFullYear());
+    d.years={[y]:{holidays:d.holidays||[],attendance:d.attendance||{},leaveOverrides:{},holidayListVersion:d.holidayListVersion||1}};
+    delete d.holidays; delete d.attendance; delete d.holidayListVersion; up=true;
+  }
+  const y0=Object.keys(d.years).sort()[0];
+  (d.employees||[]).forEach(e=>{
+    if(e.leaveOverride!==undefined){ if(e.leaveOverride!==null&&e.leaveOverride!==''){const yo=d.years[y0];yo.leaveOverrides=yo.leaveOverrides||{};yo.leaveOverrides[e.id]=+e.leaveOverride} delete e.leaveOverride; up=true }
+  });
+  Object.values(d.years).forEach(yo=>{yo.holidays=yo.holidays||[];yo.attendance=yo.attendance||{};yo.leaveOverrides=yo.leaveOverrides||{}});
+  d.version=2;
+  return up;
+}
+function newYearObj(y){return {holidays:(OFFICIAL_HOLIDAYS[y]||[]).map(([date,name])=>({date,name})),attendance:{},leaveOverrides:{},holidayListVersion:HOLIDAY_LIST_VERSION}}
+/* data.holidays / data.attendance always point at the selected year; they are not written to the file twice. */
+function link(d){
+  ['holidays','attendance','leaveOverrides'].forEach(k=>Object.defineProperty(d,k,{configurable:true,enumerable:false,get(){return this.years[this.year][k]},set(v){this.years[this.year][k]=v}}));
+}
+function selectYear(d,y){
+  y=String(y); let created=false;
+  if(!d.years[y]){d.years[y]=newYearObj(y);created=true}
+  d.year=+y; return created;
+}
+/* Prepares loaded data. Opens the current calendar year automatically, creating it when a new year begins. */
+function prepare(d){
+  d=normalise(d);
+  let changedAny=upgrade(d);
+  link(d);
+  changedAny=mergeOfficialHolidays(d)|changedAny;
+  changedAny=migrateNames(d)|changedAny;
+  const cy=new Date().getFullYear(), maxY=Math.max(...Object.keys(d.years).map(Number));
+  let target=d.years[cy]||cy>maxY?cy:(d.years[d.year]?d.year:maxY);
+  if(selectYear(d,target)) changedAny=true;
+  return {d,changed:!!changedAny};
+}
+function titleCase(s){return String(s||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|[\s.\-'(])([a-z])/g,(m,p,c)=>p+c.toUpperCase())}
+/* One-time: converts names from the sheet (many in CAPITALS) to Title Case. */
+function migrateNames(d){if((d.nameCaseVersion||0)>=1)return false;d.employees.forEach(e=>e.name=titleCase(e.name));d.nameCaseVersion=1;return true}
+function normalise(d){
+  d.settings=Object.assign({annualLeave:24,midMonthCutoff:15},d.settings||{});
+  d.employees.forEach(e=>{e.lwd=e.lwd||null; e.note=e.note||''});
+  return d;
+}
+
+/* ---------- SharePoint connection (same app registration as S&L Pipeline) ---------- */
+const CFG = {
+  clientId: "af12467f-e4aa-4998-aa00-4b0d338083cd",
+  tenantId: "be5c3fcd-0bc7-4023-a37e-2c6ed6bc4f92",
+  siteHost: "settlucasglobal.sharepoint.com",
+  sitePath: "/sites/Pipeline2026",
+  folder:   "MergAd Attendance",
+  file:     "attendance-2026.json",      // holds every year; the name is kept so existing links keep working
+  scopes:   ["User.Read", "Sites.ReadWrite.All"],
+  pollSeconds: 60
+};
+const GRAPH="https://graph.microsoft.com/v1.0";
+const NET_TIMEOUT=25000;
+let msalApp=null, account=null, driveId=null;
+const sp={itemId:null,eTag:null,byName:'',at:null,base:null,exists:false,saving:false,error:null,readOnly:false};
+let editVer=0, saveTimer=null, pollTimer=null;
+
+function serialize(){
+  data.savedAt=new Date().toISOString().slice(0,19);
+  return JSON.stringify(data,null,1).replace(/\[\s+([^\[\]{}]*?)\s+\]/g,(m,inner)=>'['+inner.replace(/\s*\n\s*/g,'')+']');
+}
+function plain(o){return JSON.parse(JSON.stringify(o))}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const enc=p=>p.split('/').map(encodeURIComponent).join('/');
+const filePath=()=>`/drives/${driveId}/root:/${enc(CFG.folder+'/'+CFG.file)}`;
+
+/* sign-in */
+function redirectUri(){return location.origin+location.pathname.replace(/index\.html$/,'')}
+function withTimeout(p,ms,what){let t;const g=new Promise((_,rej)=>{t=setTimeout(()=>{const e=new Error(what+" didn't respond in time");e.timeout=true;rej(e)},ms)});return Promise.race([p,g]).finally(()=>clearTimeout(t))}
+let tokenInflight=null;
+function token(){if(!tokenInflight)tokenInflight=getToken().finally(()=>{tokenInflight=null});return tokenInflight}
+async function getToken(){
+  try{return (await withTimeout(msalApp.acquireTokenSilent({scopes:CFG.scopes,account}),NET_TIMEOUT,'Microsoft sign-in')).accessToken}
+  catch(e){
+    const code=(e&&e.errorCode)||'';
+    const needs=(window.msal.InteractionRequiredAuthError&&e instanceof window.msal.InteractionRequiredAuthError)||/interaction_required|login_required|consent_required|no_tokens_found|no_account_error|monitor_window_timeout|token_renewal_error|block_iframe_reload/.test(code);
+    if(needs){ if(st.dirty) await sleep(0); await msalApp.acquireTokenRedirect({scopes:CFG.scopes,account}); return new Promise(()=>{}) }
+    throw e;
+  }
+}
+async function fetchT(url,opts={},ms=NET_TIMEOUT){
+  const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),ms);
+  try{const r=await fetch(url,Object.assign({},opts,{signal:ctl.signal}));const body=await r.text();
+    return {ok:r.ok,status:r.status,headers:r.headers,text:async()=>body,json:async()=>JSON.parse(body)}}
+  catch(e){if(e&&e.name==='AbortError'){const er=new Error("SharePoint didn't respond in time");er.timeout=true;throw er}throw e}
+  finally{clearTimeout(tm)}
+}
+async function graph(path,opts={}){
+  const method=(opts.method||'GET').toUpperCase(), url=path.startsWith('http')?path:GRAPH+path;
+  for(let attempt=0;;attempt++){
+    const tk=await token();
+    const headers=Object.assign({Authorization:'Bearer '+tk},opts.headers||{});
+    let r; try{r=await fetchT(url,Object.assign({},opts,{headers}))}catch(e){if(method==='GET'&&attempt===0)continue;throw e}
+    if(method==='GET'&&attempt===0&&[429,503,504].includes(r.status)){await sleep(1500);continue}
+    return r;
+  }
+}
+async function readRemote(){
+  const r=await graph(filePath());
+  if(r.status===404) return {status:'missing'};
+  if(r.status===403) return {status:'noaccess'};
+  if(!r.ok) return {status:'error',code:r.status};
+  const meta=await r.json();
+  let txt=null; const u=meta['@microsoft.graph.downloadUrl'];
+  if(u){try{const c=await fetchT(u,{cache:'no-store'});if(c.ok)txt=await c.text()}catch(e){}}
+  if(txt===null){const c=await graph(`/drives/${driveId}/items/${meta.id}/content`,{cache:'no-store'});if(!c.ok)return {status:'error',code:c.status};txt=await c.text()}
+  try{return {status:'ok',data:JSON.parse(txt),meta}}catch(e){return {status:'corrupt',meta}}
+}
+function applyMeta(m){sp.itemId=m.id;sp.eTag=m.eTag;sp.at=m.lastModifiedDateTime;sp.byName=(m.lastModifiedBy&&m.lastModifiedBy.user&&m.lastModifiedBy.user.displayName)||'';sp.exists=true}
+
+/* Three-way merge so two people editing at once both keep their changes.
+   base = what we last loaded or saved, mine = this page now, theirs = SharePoint now. */
+function eq(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function arrKey(a){const x=a.find(v=>v&&typeof v==='object');if(!x)return null;if('id' in x)return 'id';if('date' in x)return 'date';return null}
+function merge3(b,m,t){
+  if(eq(m,t))return m; if(eq(m,b))return t; if(eq(t,b))return m;
+  if(Array.isArray(m)&&Array.isArray(t)){
+    const key=arrKey(m)||arrKey(t);
+    if(key){
+      const bm=new Map((Array.isArray(b)?b:[]).map(x=>[x[key],x])),mm=new Map(m.map(x=>[x[key],x])),tm=new Map(t.map(x=>[x[key],x]));
+      const order=[...m.map(x=>x[key]),...t.map(x=>x[key]).filter(k=>!mm.has(k))],out=[];
+      for(const k of order){
+        const inB=bm.has(k),inM=mm.has(k),inT=tm.has(k);
+        if(inM&&inT) out.push(merge3(bm.get(k),mm.get(k),tm.get(k)));
+        else if(inM){ if(!inB||!eq(bm.get(k),mm.get(k))) out.push(mm.get(k)) }
+        else if(inT){ if(!inB||!eq(bm.get(k),tm.get(k))) out.push(tm.get(k)) }
+      }
+      return out;
+    }
+    if(m.length===t.length) return m.map((x,i)=>merge3(Array.isArray(b)?b[i]:undefined,x,t[i]));
+    return m;
+  }
+  if(m&&t&&typeof m==='object'&&typeof t==='object'){
+    const bb=(b&&typeof b==='object'&&!Array.isArray(b))?b:{},out={};
+    for(const k of new Set([...Object.keys(m),...Object.keys(t)])){
+      const inM=k in m,inT=k in t,inB=k in bb;
+      if(inM&&inT) out[k]=merge3(bb[k],m[k],t[k]);
+      else if(inM){ if(!inB||!eq(bb[k],m[k])) out[k]=m[k] }
+      else { if(!inB||!eq(bb[k],t[k])) out[k]=t[k] }
+    }
+    return out;
+  }
+  return m;
+}
+function asV2(d){d=normalise(d);upgrade(d);return plain(d)}
+function adopt(obj,keepYear){
+  const y=keepYear||obj.year; const p=prepare(obj); data=p.d;
+  if(keepYear&&data.years[keepYear]) selectYear(data,keepYear);
+  ensureHolidays(); pickMonth(); return p.changed;
+}
+
+/* saving */
+function changed(){
+  st.dirty=true; editVer++; setStatus();
+  clearTimeout(saveTimer); saveTimer=setTimeout(pushSave,1200);
+}
+async function pushSave(depth=0){
+  clearTimeout(saveTimer);
+  if(sp.saving||!st.dirty||sp.readOnly||!driveId) return;
+  const sent=editVer, body=serialize();
+  const headers={'Content-Type':'application/json'}; let url=filePath()+':/content';
+  if(sp.exists&&sp.eTag) headers['If-Match']=sp.eTag; else url+='?@microsoft.graph.conflictBehavior=fail';
+  sp.saving=true; setStatus();
+  let r; try{r=await graph(url,{method:'PUT',headers,body})}
+  catch(e){sp.saving=false;sp.error='network';setStatus();saveTimer=setTimeout(pushSave,8000);return}
+  sp.saving=false;
+  if(r.ok){
+    applyMeta(await r.json()); sp.base=JSON.parse(body); sp.error=null;
+    st.dirty=editVer!==sent; if(st.dirty) saveTimer=setTimeout(pushSave,400);
+    setStatus(); return;
+  }
+  if((r.status===412||r.status===409)&&depth<3){ await mergeWithRemote(); return pushSave(depth+1) }
+  if(r.status===403){ sp.readOnly=true; st.dirty=false; setStatus(); toast("You can view attendance but not edit it, so that change wasn't saved. Ask the site owner for edit access."); return }
+  if(r.status===401){ sp.error='auth'; setStatus(); return }
+  sp.error='http '+r.status; setStatus(); saveTimer=setTimeout(pushSave,8000);
+}
+async function mergeWithRemote(){
+  const res=await readRemote(); if(res.status!=='ok') return;
+  const theirs=asV2(res.data), mine=plain(data), base=sp.base?asV2(sp.base):theirs;
+  const merged=merge3(base,mine,theirs);
+  adopt(merged,data.year); applyMeta(res.meta); sp.base=theirs;
+  render(); toast(`${sp.byName||'A colleague'} saved changes at the same time. Both sets of changes are kept.`);
+}
+async function poll(){
+  if(document.hidden||!driveId||!data||st.dirty||sp.saving||painting||dlg.open) return;
+  try{
+    const r=await graph(filePath()); if(!r.ok) return;
+    const m=await r.json(); if(m.eTag===sp.eTag){setStatus();return}
+    const res=await readRemote(); if(res.status!=='ok'||st.dirty||painting||dlg.open) return;
+    const y=data.year,mo=st.month; adopt(res.data,y); st.month=mo; applyMeta(res.meta); sp.base=asV2(res.data);
+    render(); setStatus(); toast(`Attendance was just updated by ${sp.byName||'a colleague'}.`);
+  }catch(e){}
+}
+function startPolling(){clearInterval(pollTimer);pollTimer=setInterval(poll,CFG.pollSeconds*1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});setInterval(()=>{if(!st.dirty&&!sp.saving)setStatus()},30000)}
+
+function ago(iso){if(!iso)return '';const s=(Date.now()-Date.parse(iso))/1000;if(s<60)return 'just now';if(s<3600)return Math.round(s/60)+' min ago';if(s<86400)return Math.round(s/3600)+' h ago';return new Date(iso).toLocaleDateString([], {day:'numeric',month:'short'})}
+function setStatus(){
+  const el=document.getElementById('status'); let t,full='',cls='';
+  if(!driveId){t='Not connected';cls='dirty'}
+  else if(sp.readOnly){t='View only';full='You can view but not edit attendance.';cls='dirty'}
+  else if(sp.error==='auth'){t='Sign-in expired. Reload the page.';cls='bad'}
+  else if(sp.error){t="Couldn't reach SharePoint, retrying";full='Keep this page open so your change is not lost.';cls='bad'}
+  else if(st.dirty||sp.saving){t='Saving to SharePoint…';cls='dirty'}
+  else {t=sp.byName?`Saved, last change by ${sp.byName.split(' ')[0]}, ${ago(sp.at)}`:'Saved to SharePoint';full=`Saved to SharePoint (${CFG.folder}/${CFG.file}). Last change by ${sp.byName||'unknown'} on ${sp.at?new Date(sp.at).toLocaleString():''}.`}
+  el.className='status '+cls; el.querySelector('span').textContent=t; el.title=full||t;
+}
+window.addEventListener('beforeunload',e=>{if(st.dirty||sp.saving){e.preventDefault();e.returnValue=''}});
+
+/* backup copies */
+function downloadCopy(){
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([serialize()],{type:'application/json'}));
+  a.download=`attendance-backup-${TODAY}.json`;document.body.appendChild(a);a.click();a.remove();
+}
+document.getElementById('fileInput').addEventListener('change',async ev=>{
+  const f=ev.target.files[0]; ev.target.value=''; if(!f) return;
+  let d; try{d=JSON.parse(await f.text())}catch(e){alert(`${f.name} is not valid JSON: ${e.message}`);return}
+  const err=validate(d); if(err){alert(`${f.name}: ${err}`);return}
+  if(!confirm(`Replace the attendance in SharePoint with ${f.name}? Everyone will see the change. SharePoint keeps the old version in Version history.`)) return;
+  st.undo=[]; st.month=null; adopt(d); render(); changed(); toast(`Loaded ${f.name}. Saving to SharePoint…`);
+});
+
+/* ---------- undo & toast ---------- */
+function snapshot(){st.undo.push(JSON.stringify({y:data.year,a:data.attendance,h:data.holidays,e:data.employees,o:data.leaveOverrides}));if(st.undo.length>40)st.undo.shift()}
+function undo(){const s=st.undo.pop();if(!s){toast('Nothing to undo');return}const o=JSON.parse(s);if(o.y!==data.year){st.undo=[];toast('Undo only works within the same year.');return}data.attendance=o.a;data.holidays=o.h;data.employees=o.e;data.leaveOverrides=o.o||{};HOLS=holMap();changed();render();hideToast()}
+let toastTimer;
+function toast(msg,withUndo){const t=document.getElementById('toast');t.querySelector('span').textContent=msg;document.getElementById('toastUndo').hidden=!withUndo;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(hideToast,withUndo?7000:3500)}
+function hideToast(){document.getElementById('toast').hidden=true}
+document.getElementById('toastUndo').onclick=undo;
+
+/* ---------- filters ---------- */
+function filtered(list){
+  const q=st.q.trim().toLowerCase();
+  return list.filter(e=>(!st.mgr||e.manager===st.mgr)&&(!q||e.name.toLowerCase().includes(q)));
+}
+function refDate(){const y=String(data.year);return TODAY.startsWith(y)?TODAY:(TODAY>y?`${y}-12-31`:`${y}-01-01`)}
+function activeInYear(e){const y=data.year;return e.doj<=`${y}-12-31`&&(!e.lwd||e.lwd>=`${y}-01-01`)}
+function isCurrent(e){return !e.lwd||e.lwd>=refDate()}
+
+/* ---------- render: shell ---------- */
+const main=document.getElementById('main');
+function yearList(){
+  const ys=new Set(Object.keys(data.years).map(Number)); const cy=new Date().getFullYear();
+  const maxY=Math.max(cy,...ys); ys.add(maxY+1);
+  for(let y=Math.min(...ys);y<=maxY+1;y++) ys.add(y);
+  return [...ys].sort((a,b)=>a-b);
+}
+function renderYearSel(){
+  const s=document.getElementById('yearSel');
+  s.innerHTML=yearList().map(y=>`<option value="${y}" ${y===data.year?'selected':''}>${y}${data.years[y]?'':' (new)'}</option>`).join('');
+}
+function switchYear(y){
+  const isNew=!data.years[y];
+  if(isNew&&!confirm(`Start ${y}? Everyone employed in ${y} gets a fresh leave allowance. Unused leave from earlier years does not carry forward.`)){renderYearSel();return}
+  selectYear(data,y); st.undo=[]; st.month=null; ensureHolidays(); pickMonth();
+  if(isNew) changed();
+  render();
+  if(isNew) toast(`Started ${y}. ${data.holidays.length?'Government holidays are already added.':'Add the '+y+' government holidays in Holidays & policy.'}`);
+}
+document.getElementById('yearSel').addEventListener('change',e=>switchYear(+e.target.value));
+function render(){
+  if(!data) return;
+  main.classList.toggle('reg',st.view==='register');
+  renderYearSel();
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.view===st.view?'page':'false'));
+  ({balances:renderBalances,register:renderRegister,people:renderPeople,holidays:renderHolidays})[st.view]();
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.onclick=()=>{st.view=b.dataset.view;render()});
+
+function controlsHTML(extra=''){
+  return `<div class="controls">
+    <input type="search" id="q" placeholder="Search people" value="${esc(st.q)}" aria-label="Search people">
+    <select id="mgr" aria-label="Filter by manager"><option value="">All managers</option>${managers().map(m=>`<option ${m===st.mgr?'selected':''}>${esc(m)}</option>`).join('')}</select>
+    ${extra}</div>`;
+}
+function bindControls(rerender){
+  const q=document.getElementById('q'); q.oninput=()=>{st.q=q.value;rerender(true)};
+  document.getElementById('mgr').onchange=e=>{st.mgr=e.target.value;rerender()};
+}
+
+/* ---------- view: balances ---------- */
+function todayHTML(){
+  if(!TODAY.startsWith(String(data.year))) return '';
+  const ym=TODAY.slice(0,7), d=+TODAY.slice(8), idx=(d-1)*2;
+  if(isOffDay(TODAY)) return `<section class="today"><span class="when">Today, ${niceShort(TODAY)}</span><span class="names" style="margin:0;flex-basis:auto">${esc(HOLS[TODAY]||'Weekend')}. No one is expected in.</span></section>`;
+  const g={WFO:[],WFH:[],LVE:[],BT:[],LOP:[],none:[]};
+  data.employees.filter(e=>isActive(e,TODAY)).forEach(e=>{
+    const a=arr(e.id,ym,false)||[]; const v=a[idx]||a[idx+1]; const pick=(a[idx]==='LVE'||a[idx+1]==='LVE')?'LVE':v;
+    (g[pick]||g.none).push(e.name);
+  });
+  const names=[g.LVE.length?`On leave: ${g.LVE.map(esc).join(', ')}`:'', g.WFH.length?`Home: ${g.WFH.map(esc).join(', ')}`:''].filter(Boolean).join('. ');
+  return `<section class="today" aria-label="Today">
+    <span class="when">Today, ${niceShort(TODAY)}</span>
+    <div class="tally">
+      <div><strong>${g.WFO.length+g.BT.length}</strong><span>in office</span></div>
+      <div><strong>${g.WFH.length}</strong><span>from home</span></div>
+      <div><strong>${g.LVE.length+g.LOP.length}</strong><span>on leave</span></div>
+      ${g.none.length?`<div><strong>${g.none.length}</strong><span>not marked yet</span> <button class="btn link" id="goToday">Mark today</button></div>`:''}
+    </div>
+    ${names?`<div class="names">${names}</div>`:''}
+  </section>`;
+}
+function meterHTML(s){
+  const n=Math.ceil(s.ent), out=[];
+  for(let i=0;i<n;i++){
+    const cap=Math.min(1,s.ent-i); const f=Math.max(0,Math.min(cap,s.taken-i))/cap*100;
+    out.push(`<i class="${cap<1?'half':''}" style="background:linear-gradient(to top,var(--lve) ${f}%,var(--surface) ${f}%);${f>0?'border-color:var(--lve)':''}"></i>`);
+  }
+  for(let i=0;i<Math.ceil(s.over);i++) out.push('<i class="over" title="Beyond entitlement, counted as loss of pay"></i>');
+  return `<div class="meter" aria-hidden="true">${out.join('')}</div>`;
+}
+function renderBalances(keepFocus){
+  let list=filtered(data.employees).filter(activeInYear).filter(e=>st.former||isCurrent(e)).map((e,i)=>({e,s:yearStats(e),i}));
+  const k=st.sort, dir=st.sortDir;
+  list.sort((a,b)=>{
+    const v=k==='order'?a.i-b.i:k==='name'?a.e.name.localeCompare(b.e.name):k==='pending'?a.s.pending-b.s.pending:k==='taken'?a.s.taken-b.s.taken:k==='ent'?a.s.ent-b.s.ent:k==='wfh'?a.s.tot.wfh-b.s.tot.wfh:k==='wfo'?a.s.tot.wfo-b.s.tot.wfo:a.s.tot.lop-b.s.tot.lop;
+    return v*dir;
+  });
+  const formerCount=data.employees.filter(e=>activeInYear(e)&&!isCurrent(e)).length;
+  const th=(key,label,num)=>`<th class="sortable ${num?'num':''}" data-sort="${key}" ${st.sort===key?`aria-sort="${dir>0?'ascending':'descending'}"`:''}>${label}</th>`;
+  main.innerHTML=`
+    <div class="head">
+      <div><h1>Leave balances, ${data.year}</h1><p class="sub">${fmt(+data.settings.annualLeave)} days a year, starting fresh each January. People who join during the year get a share for the months left. Names are in the same order as the sheet. Click a name for the month-by-month breakdown.</p></div>
+      ${controlsHTML(`<label class="check"><input type="checkbox" id="former" ${st.former?'checked':''}> Show people who left (${formerCount})</label>`)}
+    </div>
+    ${todayHTML()}
+    <div class="card scroll-x">
+    ${list.length?`<table class="list">
+      <thead><tr>${th('order','Person')}${th('ent','Entitled',1)}${th('taken','Taken',1)}${th('pending','Pending',1)}<th>Used so far</th>${th('wfo','Office days',1)}${th('wfh','WFH days',1)}${th('lop','LOP days',1)}</tr></thead>
+      <tbody>${list.map(({e,s})=>`<tr data-open="${e.id}">
+        <td class="who"><b>${esc(e.name)}${e.lwd&&e.lwd<TODAY?'<span class="tag">Left '+nice(e.lwd)+'</span>':''}${e.category&&e.category!=='MergAd'?`<span class="tag">${esc(e.category)}</span>`:''}</b><small class="meta"><span>Manager: ${esc(e.manager||'none')}</span><span>Joined ${nice(e.doj)}</span></small></td>
+        <td class="num">${fmt(s.ent)}</td>
+        <td class="num">${fmt(s.taken)}</td>
+        <td class="num"><span class="pending ${s.pending<=3?'low':''}">${fmt(s.pending)}</span></td>
+        <td class="meter-wrap">${meterHTML(s)}<small>${s.ent?Math.round(Math.min(s.taken,s.ent)/s.ent*100):0}% used${s.over?`, ${fmt(s.over)} over`:''}</small></td>
+        <td class="num">${fmt(s.tot.wfo)}</td>
+        <td class="num">${fmt(s.tot.wfh)}</td>
+        <td class="num" style="${s.tot.lop?'color:var(--lop);font-weight:700':''}">${fmt(s.tot.lop)}</td>
+      </tr>`).join('')}</tbody></table>`:`<div class="empty">No one matches. Clear the search or pick "All managers".</div>`}
+    </div>`;
+  bindControls(r=>{renderBalances(r);if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
+  document.getElementById('former').onchange=e=>{st.former=e.target.checked;renderBalances()};
+  main.querySelectorAll('th.sortable').forEach(t=>t.onclick=()=>{const k=t.dataset.sort;if(st.sort===k)st.sortDir*=-1;else{st.sort=k;st.sortDir=(k==='order'||k==='name')?1:-1}renderBalances()});
+  main.querySelectorAll('tr[data-open]').forEach(tr=>tr.onclick=()=>openPerson(tr.dataset.open));
+  const gt=document.getElementById('goToday'); if(gt) gt.onclick=()=>{st.view='register';st.month=TODAY.slice(0,7);render()};
+}
+
+/* ---------- view: register ---------- */
+function pickMonth(){
+  if(st.month && st.month.startsWith(String(data.year))) return;
+  st.month = TODAY.startsWith(String(data.year)) ? TODAY.slice(0,7) : ymOf(1);
+}
+const SUMCOLS=[['avail','Leave available'],['lve','Total leaves'],['bal','Leave balance'],['wfo','Total WFO'],['wfh','Total WFH'],['lop','Total LOP'],['salary','Salary days']];
+function summaryCells(e,ym){
+  const s=yearStats(e), r=s.months[+ym.slice(5)-1];
+  if(!r) return SUMCOLS.map((c,i)=>`<td class="s ${i?'':'first'}"></td>`).join('');
+  return SUMCOLS.map(([k],i)=>{
+    const v=r[k]; let cls='s'+(i?'':' first');
+    if(k==='bal') cls+= v<0?' neg':' key';
+    if(k==='lop'&&v>0) cls+=' lop';
+    return `<td class="${cls}" data-k="${k}">${fmt(v)}</td>`;
+  }).join('');
+}
+function cellTitle(e,iso,k,v){return `${e.name}, ${niceShort(iso)} ${k?'afternoon':'morning'}: ${v?CODES[v].label:'not marked'}`}
+function cellClass(e,iso,v){
+  if(!isActive(e,iso)) return 'h off';
+  return 'h'+(v?' '+v:'')+(!v&&!isOffDay(iso)&&iso<=TODAY?' blank-due':'');
+}
+function renderRegister(){
+  pickMonth();
+  const ym=st.month, n=dim(ym), mi=+ym.slice(5);
+  const rows=filtered(data.employees).filter(e=>activeInMonth(e,ym));
+  const curYm=TODAY.slice(0,7);
+  let head=`<th class="nm">Person</th>`;
+  for(let d=1;d<=n;d++){
+    const iso=`${ym}-${pad(d)}`, we=isWeekend(iso), ph=HOLS[iso];
+    head+=`<th class="day ${we?'we':''} ${ph?'ph':''} ${iso===TODAY?'now':''}" data-day="${d}" title="${iso===TODAY?'Today, ':''}${niceShort(iso)}${ph?': '+esc(ph):''}. Click to mark everyone with the selected mark."><span class="dn">${d}</span><span class="wd">${WD[dow(iso)].slice(0,2)}</span></th>`;
+  }
+  head+=SUMCOLS.map(([,l],i)=>`<th class="s ${i?'':'first'}">${l}</th>`).join('');
+  let body='';
+  for(const e of rows){
+    const a=arr(e.id,ym,true);
+    let tds='';
+    for(let d=1;d<=n;d++){
+      const iso=`${ym}-${pad(d)}`; const we=isWeekend(iso)?' we':'', ph=HOLS[iso]?' ph':'', nw=iso===TODAY?' now':'';
+      tds+=`<td class="d${we}${ph}${nw}">`+[0,1].map(k=>{const v=a[(d-1)*2+k];return `<div class="${cellClass(e,iso,v)}" data-e="${e.id}" data-i="${(d-1)*2+k}" title="${esc(cellTitle(e,iso,k,v))}">${v&&CODES[v]?CODES[v].letter:''}</div>`}).join('')+`</td>`;
+    }
+    body+=`<tr data-row="${e.id}"><th class="nm"><button data-open="${e.id}" title="${esc(e.name)}">${esc(e.name)}</button><small>${e.manager?'Manager: '+esc(e.manager):''}</small></th>${tds}${summaryCells(e,ym)}</tr>`;
+  }
+  const unmarked=rows.reduce((t,e)=>t+monthCounts(e,ym).unmarked,0)/2;
+  main.innerHTML=`
+    <div class="reg-bar">
+      <h1 class="reg-title">${MONTHS[mi-1]} <span>${data.year}</span></h1>
+      <div class="months" role="group" aria-label="Month">${MON.map((m,i)=>`<button data-m="${i+1}" aria-pressed="${i+1===mi}" class="${ymOf(i+1)>curYm?'future':''}">${m}</button>`).join('')}</div>
+      ${data.holidays.length?'':`<span class="reg-info" style="color:var(--danger);margin-left:0">No government holidays for ${data.year} yet. Add them in Holidays &amp; policy.</span>`}<span class="reg-info" title="${rows.length} people this month. Top box is the morning (FH), bottom box the afternoon (SH).">${unmarked?`<b>${fmt(unmarked)}</b> days unmarked up to today`:'All marked up to today'}</span>
+    </div>
+    <div class="reg-bar">
+      <div class="brushes" role="group" aria-label="Mark to apply">${BRUSHES.map((b,i)=>`<button class="brush" data-b="${b}" aria-pressed="${st.brush===b}" title="${b==='CLR'?'Remove the mark':esc(CODES[b].label+': '+CODES[b].help)} (key ${i+1}). Click a box again to remove the mark."><span class="sw ${b}">${b==='CLR'?'':CODES[b].letter}</span>${{WFO:'Office',WFH:'WFH',LVE:'Leave',BT:'Travel',LOP:'Loss of pay',HOL:'Holiday',CLR:'Clear'}[b]}</button>`).join('')}</div>
+      <button class="btn" id="undoBtn" title="Ctrl+Z" ${st.undo.length?'':'disabled'}>Undo</button>
+      ${controlsHTML(`<button class="btn" id="csvBtn" title="Download this month's totals as a CSV file">Export CSV</button>`)}
+    </div>
+    <div class="grid-wrap" id="gridWrap">${rows.length?`<table class="grid"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`:`<div class="empty">No one was employed in ${MONTHS[mi-1]} with these filters.</div>`}</div>`;
+  bindControls(r=>{renderRegister();if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
+  main.querySelectorAll('.months button').forEach(b=>b.onclick=()=>{st.month=ymOf(+b.dataset.m);renderRegister()});
+  main.querySelectorAll('.brush').forEach(b=>b.onclick=()=>setBrush(b.dataset.b));
+  document.getElementById('undoBtn').onclick=undo;
+  document.getElementById('csvBtn').onclick=exportCSV;
+  main.querySelectorAll('.nm button[data-open]').forEach(b=>b.onclick=()=>openPerson(b.dataset.open));
+  main.querySelectorAll('th.day').forEach(t=>t.onclick=()=>paintDay(+t.dataset.day));
+  bindGrid();
+  const nowTh=main.querySelector('th.day.now'); const gw=document.getElementById('gridWrap');
+  if(nowTh&&gw) gw.scrollLeft=Math.max(0,nowTh.offsetLeft-gw.clientWidth/2);
+}
+function setBrush(b){st.brush=b;document.querySelectorAll('.brush').forEach(x=>x.setAttribute('aria-pressed',x.dataset.b===b))}
+let painting=false, touchedRows=new Set(), lastPointer='mouse', strokeVal=null;
+/* Clicking a box that already has the selected mark clears it; a drag that starts there clears matching boxes. */
+function startStroke(el){const b=st.brush==='CLR'?null:st.brush;const a=arr(el.dataset.e,st.month,true);strokeVal=(b&&a[+el.dataset.i]===b)?null:b}
+function applyCell(el){
+  if(el.classList.contains('off')) return;
+  const e=emp(el.dataset.e), i=+el.dataset.i, a=arr(e.id,st.month,true);
+  const v=strokeVal;
+  if(a[i]===v) return;
+  if(v===null && st.brush!=='CLR' && a[i]!==st.brush) return; // erasing stroke only removes the selected mark
+  a[i]=v;
+  const iso=`${st.month}-${pad(Math.floor(i/2)+1)}`;
+  el.className=cellClass(e,iso,v); el.textContent=v?CODES[v].letter:''; el.title=cellTitle(e,iso,i%2,v);
+  touchedRows.add(e.id);
+}
+function refreshRows(){
+  touchedRows.forEach(id=>{
+    const tr=main.querySelector(`tr[data-row="${id}"]`); if(!tr) return;
+    tr.querySelectorAll('td.s').forEach(td=>td.remove());
+    tr.insertAdjacentHTML('beforeend',summaryCells(emp(id),st.month));
+  });
+  const ub=document.getElementById('undoBtn'); if(ub) ub.disabled=!st.undo.length;
+  touchedRows.clear();
+}
+function bindGrid(){
+  const g=main.querySelector('table.grid'); if(!g) return;
+  g.addEventListener('pointerdown',ev=>{
+    lastPointer=ev.pointerType;
+    const h=ev.target.closest('.h'); if(!h||h.classList.contains('off')||ev.pointerType==='touch') return;
+    ev.preventDefault(); snapshot(); startStroke(h); painting=true; applyCell(h);
+  });
+  g.addEventListener('pointerover',ev=>{if(!painting)return;const h=ev.target.closest('.h');if(h)applyCell(h)});
+  g.addEventListener('click',ev=>{
+    if(lastPointer!=='touch') return;
+    const h=ev.target.closest('.h'); if(!h||h.classList.contains('off')) return;
+    snapshot(); startStroke(h); applyCell(h); if(touchedRows.size){refreshRows();changed()} else st.undo.pop();
+  });
+}
+window.addEventListener('pointerup',()=>{if(!painting)return;painting=false;if(touchedRows.size){refreshRows();changed()}else st.undo.pop()});
+
+function paintDay(d){
+  const iso=`${st.month}-${pad(d)}`, v=st.brush==='CLR'?null:st.brush;
+  const rows=filtered(data.employees).filter(e=>isActive(e,iso));
+  if(!rows.length) return;
+  snapshot();
+  rows.forEach(e=>{const a=arr(e.id,st.month,true);a[(d-1)*2]=v;a[(d-1)*2+1]=v});
+  changed(); renderRegister();
+  toast(`${niceShort(iso)} marked as ${v?CODES[v].label:'cleared'} for ${rows.length} people.`,true);
+}
+function exportCSV(){
+  const ym=st.month, mi=+ym.slice(5);
+  const rows=[['Name','Category','Manager','DOJ',...SUMCOLS.map(c=>c[1])]];
+  filtered(data.employees).filter(e=>activeInMonth(e,ym)).forEach(e=>{const r=yearStats(e).months[mi-1];rows.push([e.name,e.category,e.manager,e.doj,...SUMCOLS.map(([k])=>fmt(r[k]))])});
+  const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`attendance-${MON[mi-1]}-${data.year}.csv`;document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- person dialog ---------- */
+const dlg=document.getElementById('dlg');
+function showDlg(html,narrow){dlg.className=narrow?'narrow':'';dlg.innerHTML=html;if(!dlg.open)dlg.showModal();dlg.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>dlg.close())}
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+function leaveDatesHTML(e){
+  const out=[];
+  for(let m=1;m<=12;m++){
+    const ym=ymOf(m), a=arr(e.id,ym,false); if(!a) continue; const parts=[];
+    for(let d=1;d<=dim(ym);d++){const iso=`${ym}-${pad(d)}`;if(!isActive(e,iso))continue;
+      const f=a[(d-1)*2]==='LVE', s=a[(d-1)*2+1]==='LVE';
+      if(f&&s) parts.push(`${d}`); else if(f) parts.push(`${d} (morning)`); else if(s) parts.push(`${d} (afternoon)`);}
+    if(parts.length) out.push(`<p><b>${MON[m-1]}</b> ${parts.join(', ')}</p>`);
+  }
+  return out.length?out.join(''):'<p>No leave taken this year.</p>';
+}
+function openPerson(id){
+  const e=emp(id), s=yearStats(e);
+  const rows=s.months.map((r,i)=>r?`<tr><td>${MONTHS[i]}</td><td>${fmt(r.avail)}</td><td>${fmt(r.lve)}</td><td style="${r.bal<0?'color:var(--danger);font-weight:700':''}">${fmt(r.bal)}</td><td>${fmt(r.wfo)}</td><td>${fmt(r.wfh)}</td><td style="${r.lop?'color:var(--lop);font-weight:700':''}">${fmt(r.lop)}</td><td>${fmt(r.salary)}</td></tr>`:`<tr class="na"><td>${MONTHS[i]}</td><td colspan="7">not employed</td></tr>`).join('');
+  showDlg(`
+    <div class="dlg-head"><div><h2>${esc(e.name)}</h2><div class="facts">${esc(e.category||'')}${e.manager?`, reports to ${esc(e.manager)}`:''}. Joined ${nice(e.doj)}${e.lwd?`, last day ${nice(e.lwd)}`:''}.${e.note?` Note: ${esc(e.note)}`:''}</div></div><button class="x" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body">
+      <div class="bignums">
+        <div><strong>${fmt(s.ent)}</strong><span>leave days for ${data.year}</span></div>
+        <div><strong>${fmt(s.taken)}</strong><span>taken</span></div>
+        <div><strong style="${s.pending<=3?'color:var(--danger)':''}">${fmt(s.pending)}</strong><span>pending</span></div>
+        <div><strong>${fmt(s.tot.wfh)}</strong><span>WFH days</span></div>
+        ${s.tot.lop?`<div><strong style="color:var(--lop)">${fmt(s.tot.lop)}</strong><span>loss of pay</span></div>`:''}
+      </div>
+      <div class="explain">${entitlementWhy(e)}${s.tot.unmarked?` ${fmt(s.tot.unmarked)} working days up to today are not marked yet.`:''}</div>
+      <div class="scroll-x"><table class="mini"><thead><tr><th>Month</th><th>Leave available</th><th>Total leaves</th><th>Leave balance</th><th>Total WFO</th><th>Total WFH</th><th>Total LOP</th><th>Salary days</th></tr></thead>
+      <tbody>${rows}</tbody><tfoot><tr><td>Year</td><td>${fmt(s.ent)}</td><td>${fmt(s.taken)}</td><td>${fmt(s.ent-s.taken)}</td><td>${fmt(s.tot.wfo)}</td><td>${fmt(s.tot.wfh)}</td><td>${fmt(s.tot.lop)}</td><td>${fmt(s.tot.salary)}</td></tr></tfoot></table></div>
+      <div class="leave-dates"><h2 style="font-size:15px;margin-bottom:6px">Leave dates</h2>${leaveDatesHTML(e)}</div>
+    </div>
+    <div class="dlg-foot"><button class="btn" id="pEdit">Edit details</button><button class="btn primary" data-close>Close</button></div>`);
+  document.getElementById('pEdit').onclick=()=>openEmployee(id);
+}
+
+/* ---------- view: people ---------- */
+function renderPeople(){
+  const list=filtered(data.employees);
+  main.innerHTML=`
+    <div class="head"><div><h1>People</h1><p class="sub">Add joiners, record a last working day when someone leaves, or set a custom leave allowance.</p></div>
+      ${controlsHTML(`<button class="btn primary" id="addP">Add person</button>`)}</div>
+    <div class="card scroll-x"><table class="list">
+      <thead><tr><th>Name</th><th>Category</th><th>Manager</th><th>Joined</th><th>Last day</th><th class="num">Leave for ${data.year}</th><th>Status</th></tr></thead>
+      <tbody>${list.map(e=>{const status=!isCurrent(e)?'<span class="status-pill left">Left</span>':e.lwd?'<span class="status-pill soon">Leaving</span>':e.doj>TODAY?'<span class="status-pill soon">Joining</span>':'<span class="status-pill">Active</span>';
+        return `<tr data-edit="${e.id}"><td class="who"><b>${esc(e.name)}</b>${e.note?`<small>${esc(e.note)}</small>`:''}</td><td>${esc(e.category)}</td><td>${esc(e.manager)}</td><td>${nice(e.doj)}</td><td>${e.lwd?nice(e.lwd):''}</td><td class="num">${fmt(entitlement(e))}${getOverride(e)!==null?' <span class="tag">custom</span>':''}</td><td>${status}</td></tr>`}).join('')}</tbody>
+    </table></div>`;
+  bindControls(r=>{renderPeople();if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
+  document.getElementById('addP').onclick=()=>openEmployee(null);
+  main.querySelectorAll('tr[data-edit]').forEach(tr=>tr.onclick=()=>openEmployee(tr.dataset.edit));
+}
+function openEmployee(id){
+  const e=id?emp(id):{name:'',category:'MergAd',manager:'',doj:TODAY.startsWith(String(data.year))?TODAY:`${data.year}-01-01`,lwd:null,note:''};
+  showDlg(`
+    <div class="dlg-head"><h2>${id?'Edit '+esc(e.name):'Add person'}</h2><button class="x" data-close aria-label="Close">×</button></div>
+    <div class="dlg-body"><div class="form">
+      <div class="field full"><label for="eN">Name</label><input id="eN" value="${esc(e.name)}" required></div>
+      <div class="field"><label for="eC">Category</label><input id="eC" value="${esc(e.category)}" list="catList"><datalist id="catList">${[...new Set(data.employees.map(x=>x.category))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist></div>
+      <div class="field"><label for="eM">Manager</label><input id="eM" value="${esc(e.manager)}" list="mgrList"><datalist id="mgrList">${managers().map(m=>`<option value="${esc(m)}">`).join('')}</datalist></div>
+      <div class="field"><label for="eD">Date of joining</label><input type="date" id="eD" value="${e.doj}"></div>
+      <div class="field"><label for="eL">Last working day</label><input type="date" id="eL" value="${e.lwd||''}"><small>Leave empty while they work here.</small></div>
+      <div class="field full"><label for="eO">Leave days for ${data.year}</label><input type="number" id="eO" step="0.5" min="0" value="${id&&getOverride(e)!==null?getOverride(e):''}" placeholder="Automatic"><small>Applies to ${data.year} only. Each new year starts again from the automatic allowance.</small><small id="eAuto"></small></div>
+      <div class="field full"><label for="eNote">Note</label><input id="eNote" value="${esc(e.note)}"></div>
+    </div></div>
+    <div class="dlg-foot">${id?'<button class="btn danger" id="eDel" style="margin-right:auto">Delete person</button>':''}<button class="btn" data-close>Cancel</button><button class="btn primary" id="eSave">${id?'Save changes':'Add person'}</button></div>`,true);
+  const $=i=>document.getElementById(i);
+  const auto=()=>{const d=$('eD').value; if(!d){$('eAuto').textContent='';return} $('eAuto').textContent=`Leave empty to use the rule: ${fmt(autoEntitlement({doj:d}))} days for someone joining on ${nice(d)}.`};
+  $('eD').addEventListener('input',auto); auto();
+  $('eSave').onclick=()=>{
+    const name=titleCase($('eN').value), doj=$('eD').value, lwd=$('eL').value||null;
+    if(!name){$('eN').focus();alert('Enter a name.');return}
+    if(!doj){alert('Enter the date of joining.');return}
+    if(lwd&&lwd<doj){alert('The last working day is before the joining date.');return}
+    snapshot();
+    const o=$('eO').value.trim();
+    const rec={name,category:$('eC').value.trim(),manager:$('eM').value.trim(),doj,lwd,note:$('eNote').value.trim()};
+    let eid=id;
+    if(id) Object.assign(emp(id),rec);
+    else{let n=data.employees.length+1,nid;do{nid='e'+pad(n++)}while(emp(nid));data.employees.push(Object.assign({id:nid},rec));data.attendance[nid]={};eid=nid}
+    if(o==='') delete data.leaveOverrides[eid]; else data.leaveOverrides[eid]=+o;
+    ensureHolidays(); changed(); dlg.close(); render(); toast(id?`Saved ${name}.`:`Added ${name}. Weekends and holidays are already marked for them.`,true);
+  };
+  if(id) $('eDel').onclick=()=>{
+    if(!confirm(`Delete ${e.name} and all their attendance? If they resigned, set a last working day instead so their history stays.`)) return;
+    snapshot(); data.employees=data.employees.filter(x=>x.id!==id); Object.values(data.years).forEach(yo=>{delete yo.attendance[id];delete yo.leaveOverrides[id]});
+    changed(); dlg.close(); render(); toast(`Deleted ${e.name}.`,true);
+  };
+}
+
+/* ---------- view: holidays & policy ---------- */
+function renderHolidays(){
+  const hs=data.holidays.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  main.innerHTML=`
+    <div class="head"><div><h1>Holidays &amp; leave policy</h1><p class="sub">Saturdays and Sundays are marked as holidays automatically. Add public holidays here and they are marked for everyone.</p></div></div>
+    <div class="two">
+      <div class="card scroll-x"><table class="list" style="min-width:420px">
+        <thead><tr><th>Date</th><th>Day</th><th>Holiday</th><th></th></tr></thead>
+        <tbody>${hs.length?hs.map(h=>`<tr style="cursor:default"><td>${nice(h.date)}</td><td>${WD[dow(h.date)]}</td><td>${esc(h.name)}</td><td class="num"><button class="btn small danger" data-del="${h.date}">Remove</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No public holidays yet. Add the first one on the right.</td></tr>'}</tbody>
+      </table></div>
+      <div>
+        <div class="card panel">
+          <h2>Add a public holiday</h2>
+          <div class="row"><div class="field"><label for="hD">Date</label><input type="date" id="hD" min="${data.year}-01-01" max="${data.year}-12-31"></div>
+          <div class="field"><label for="hN">Name</label><input id="hN" placeholder="e.g. Diwali"></div></div>
+          <div class="row"><button class="btn primary" id="hAdd">Add holiday</button></div>
+          <p>Everyone employed on that date gets marked as Holiday.</p>
+        </div>
+        <div class="card panel" style="margin-top:16px">
+          <h2>Leave policy</h2>
+          <div class="row"><div class="field"><label for="pA">Leave days a year</label><input type="number" id="pA" min="0" step="0.5" value="${data.settings.annualLeave}"></div>
+          <div class="field"><label for="pC">Mid-month cut-off day</label><input type="number" id="pC" min="1" max="31" value="${data.settings.midMonthCutoff}"></div></div>
+          <div class="row"><button class="btn" id="pSave">Save policy</button></div>
+          <p>People who joined before ${data.year} get the full allowance. Joiners get ${fmt(data.settings.annualLeave/12)} days for each month left after the joining month, plus ${fmt(data.settings.annualLeave/12)} for the joining month if they join on or before the ${data.settings.midMonthCutoff}th (half that if later). Someone joining on 1 July gets ${fmt(autoEntitlement({doj:`${data.year}-07-01`}))}.</p>
+          <p>Leave taken beyond the allowance is counted as loss of pay, which lowers salary days.</p>
+        </div>
+        <div class="card panel" style="margin-top:16px">
+          <h2>Backup copy</h2>
+          <p>Attendance saves to SharePoint automatically, and SharePoint keeps every earlier version in Version history. Download a copy if you want your own backup.</p>
+          <div class="row"><button class="btn" id="dlCopy">Download a copy</button><button class="btn" id="ldCopy">Load a copy…</button></div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('dlCopy').onclick=downloadCopy;
+  document.getElementById('ldCopy').onclick=()=>document.getElementById('fileInput').click();
+  main.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    const date=b.dataset.del; snapshot();
+    data.holidays=data.holidays.filter(h=>h.date!==date); HOLS=holMap();
+    if(!isWeekend(date)){const ym=date.slice(0,7),i=(+date.slice(8)-1)*2;Object.values(data.attendance).forEach(a=>{if(a[ym]){if(a[ym][i]==='HOL')a[ym][i]=null;if(a[ym][i+1]==='HOL')a[ym][i+1]=null}})}
+    changed(); renderHolidays(); toast(`Removed the holiday on ${nice(date)}.`,true);
+  });
+  document.getElementById('hAdd').onclick=()=>{
+    const date=document.getElementById('hD').value, name=document.getElementById('hN').value.trim()||'Public holiday';
+    if(!date||!date.startsWith(String(data.year))){alert(`Pick a date in ${data.year}.`);return}
+    if(HOLS[date]){alert(`${nice(date)} is already a holiday (${HOLS[date]}).`);return}
+    snapshot(); data.holidays.push({date,name}); HOLS=holMap();
+    const ym=date.slice(0,7),i=(+date.slice(8)-1)*2;
+    data.employees.forEach(e=>{if(isActive(e,date)){const a=arr(e.id,ym,true);a[i]='HOL';a[i+1]='HOL'}});
+    changed(); renderHolidays(); toast(`Added ${name} on ${nice(date)}.`,true);
+  };
+  document.getElementById('pSave').onclick=()=>{
+    const A=+document.getElementById('pA').value, C=+document.getElementById('pC').value;
+    if(!(A>=0)||!(C>=1&&C<=31)){alert('Enter a valid number of days and a cut-off day between 1 and 31.');return}
+    snapshot(); data.settings.annualLeave=A; data.settings.midMonthCutoff=C; changed(); renderHolidays(); toast('Leave policy saved.',true);
+  };
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown',ev=>{
+  if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='s'){ev.preventDefault();pushSave();return}
+  const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+  if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='z'&&!typing){ev.preventDefault();undo();return}
+  if(st.view==='register'&&!typing&&!dlg.open&&/^[1-7]$/.test(ev.key)) setBrush(BRUSHES[+ev.key-1]);
+});
+
+/* ---------- boot ---------- */
+function gate(title,detail,buttons){
+  document.body.classList.add('gated');
+  main.className=''; main.innerHTML=`<div class="gate"><h2>${esc(title)}</h2><p>${detail}</p><div class="btns">${(buttons||[]).map((b,i)=>`<button class="btn ${i?'':'primary'}" data-g="${i}">${esc(b[0])}</button>`).join('')}</div></div>`;
+  (buttons||[]).forEach((b,i)=>main.querySelector(`[data-g="${i}"]`).onclick=b[1]);
+}
+const reload=()=>location.reload();
+async function boot(){
+  setStatus();
+  if(location.protocol==='file:'){ gate('Open this page from its web address.','Microsoft sign-in only works when the page is opened from its web address, not from a file on your computer.',[]); return }
+  if(!window.msal){ gate("Microsoft sign-in couldn't load.",'Check your connection and reload. If it keeps happening, your network may be blocking cdn.jsdelivr.net.',[['Reload',reload]]); return }
+  msalApp=new msal.PublicClientApplication({auth:{clientId:CFG.clientId,authority:'https://login.microsoftonline.com/'+CFG.tenantId,redirectUri:redirectUri(),postLogoutRedirectUri:redirectUri(),navigateToLoginRequestUrl:false},cache:{cacheLocation:'localStorage'}});
+  try{ await msalApp.initialize(); const res=await msalApp.handleRedirectPromise(); if(res&&res.account) msalApp.setActiveAccount(res.account) }
+  catch(e){ gate("Sign-in didn't complete.",esc((e&&e.message)||String(e)),[['Try again',reload]]); return }
+  account=msalApp.getActiveAccount()||msalApp.getAllAccounts()[0]||null;
+  if(account) msalApp.setActiveAccount(account);
+  if(!account){ gate('MergAd attendance','Sign in with your Sett Lucas Microsoft account to open the attendance register.',[['Sign in with Microsoft',()=>msalApp.loginRedirect({scopes:CFG.scopes})]]); return }
+  const name=account.name||account.username||'';
+  document.getElementById('meName').textContent=name;
+  document.getElementById('avatar').textContent=name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+  document.getElementById('me').hidden=false;
+  document.getElementById('signOut').onclick=async()=>{ if(st.dirty||sp.saving) await pushSave(); msalApp.logoutRedirect({account,postLogoutRedirectUri:redirectUri()}) };
+  main.innerHTML='<div class="gate"><h2>Connecting to SharePoint…</h2><p>Loading the attendance register.</p></div>';
+  try{
+    const r=await graph(`/sites/${CFG.siteHost}:${CFG.sitePath}`);
+    if(r.status===403||r.status===404){ gate("You don't have access to Pipeline 2026.",'Ask the site owner to add you to the Pipeline 2026 SharePoint site.',[['Try again',reload]]); return }
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const site=await r.json(); const d=await graph(`/sites/${site.id}/drive`); if(!d.ok) throw new Error('HTTP '+d.status);
+    driveId=(await d.json()).id;
+  }catch(e){ gate("Couldn't reach SharePoint.",esc(e.message||String(e)),[['Try again',reload]]); return }
+  let res; try{res=await readRemote()}catch(e){ gate("Couldn't load attendance.",esc(e.message||String(e)),[['Try again',reload]]); return }
+  if(res.status==='noaccess'){ gate("You don't have access to attendance.",`Ask the site owner for access to the <b>${esc(CFG.folder)}</b> folder.`,[['Try again',reload]]); return }
+  if(res.status==='corrupt'){ gate("The attendance file couldn't be read.",`${esc(CFG.folder)}/${esc(CFG.file)} in SharePoint isn't valid. Open it there and restore an earlier version from Version history.`,[['Try again',reload]]); return }
+  if(res.status==='error'){ gate('SharePoint returned an error.',`HTTP ${res.code}. Try again in a moment.`,[['Try again',reload]]); return }
+  if(res.status==='missing'){
+    gate('The attendance file is missing.',`There is no <b>${esc(CFG.file)}</b> in the <b>${esc(CFG.folder)}</b> folder. Upload it there, or start from the copy built into this page.`,
+      [['Try again',reload],['Create it from the built-in copy',()=>{document.body.classList.remove('gated');adopt(JSON.parse(document.getElementById('seed').textContent));render();changed()}]]);
+    return;
+  }
+  const upgraded=adopt(res.data); applyMeta(res.meta); sp.base=asV2(res.data);
+  document.body.classList.remove('gated'); render(); setStatus(); startPolling();
+  if(upgraded) changed();
+}
+function measureTop(){document.documentElement.style.setProperty('--top-h',document.querySelector('.top').offsetHeight+'px')}
+window.addEventListener('resize',measureTop);measureTop();
+if(window.ResizeObserver) new ResizeObserver(measureTop).observe(document.querySelector('.top'));
+boot();
+})();
+</script>
+</body>
+</html>
