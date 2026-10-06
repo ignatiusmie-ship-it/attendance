@@ -523,6 +523,9 @@ const CFG = {
   folder:   "MergAd Attendance",
   file:     "attendance-2026.json",      // holds every year; the name is kept so existing links keep working
   scopes:   ["User.Read", "Sites.ReadWrite.All"],
+  /* Only these people can edit. Everyone else sees just their own attendance, view only.
+     To change the list, edit it here and upload the page again. */
+  admins: ["ephrem.j@sett-lucas.com","vijay.b@sett-lucas.com","suraj.r@sett-lucas.com","sri.s@sett-lucas.com"],
   pollSeconds: 60
 };
 const GRAPH="https://graph.microsoft.com/v1.0";
@@ -714,12 +717,11 @@ function refDate(){const y=String(data.year);return TODAY.startsWith(y)?TODAY:(T
 function activeInYear(e){const y=data.year;return e.doj<=`${y}-12-31`&&(!e.lwd||e.lwd>=`${y}-01-01`)}
 function isCurrent(e){return !e.lwd||e.lwd>=refDate()}
 /* ---------- roles ----------
-   Admins (emails in settings.admins) can edit everything. Everyone else gets a read-only "My attendance"
-   page showing only their own record, matched by the work email on their People entry.
-   While the admin list is empty, everyone who signs in can edit (so the first admin can set it up). */
+   People in CFG.admins can edit everything. Everyone else gets a read-only "My attendance"
+   page showing only their own record, matched by the work email on their People entry. */
 function myEmail(){return ((account&&account.username)||'').toLowerCase()}
-function admins(){return (data&&data.settings.admins)||[]}
-function isAdmin(){const a=admins();return !a.length||a.includes(myEmail())}
+function admins(){return CFG.admins.map(a=>a.toLowerCase())}
+function isAdmin(){return admins().includes(myEmail())}
 function myEmp(){const m=myEmail();return m?data.employees.find(e=>(e.email||'').toLowerCase()===m):null}
 
 /* ---------- render: shell ---------- */
@@ -815,7 +817,6 @@ function renderBalances(keepFocus){
       <div><h1>Leave balances, ${data.year}</h1></div>
       ${controlsHTML(`<label class="check"><input type="checkbox" id="former" ${st.former?'checked':''}> Show people who left (${formerCount})</label>`)}
     </div>
-    ${admins().length?'':`<div class="banner"><p><b>Anyone who signs in can edit right now.</b> Add yourself as admin in Holidays &amp; policy, and add each person's work email in People, so staff only see their own attendance.</p><button class="btn" id="goAdm">Set up admins</button></div>`}
     ${todayHTML()}
     <div class="card scroll-x">
     ${list.length?`<table class="list">
@@ -832,7 +833,6 @@ function renderBalances(keepFocus){
       </tr>`).join('')}</tbody></table>`:`<div class="empty">No one matches. Clear the search or pick "All managers".</div>`}
     </div>`;
   bindControls(r=>{renderBalances(r);if(r){const q=document.getElementById('q');q.focus();q.setSelectionRange(q.value.length,q.value.length)}});
-  const ga=document.getElementById('goAdm'); if(ga) ga.onclick=()=>{st.view='holidays';render()};
   document.getElementById('former').onchange=e=>{st.former=e.target.checked;renderBalances()};
   main.querySelectorAll('th.sortable').forEach(t=>t.onclick=()=>{const k=t.dataset.sort;if(st.sort===k)st.sortDir*=-1;else{st.sort=k;st.sortDir=(k==='order'||k==='name')?1:-1}renderBalances()});
   main.querySelectorAll('tr[data-open]').forEach(tr=>tr.onclick=()=>openPerson(tr.dataset.open));
@@ -1109,11 +1109,8 @@ function renderHolidays(){
         </div>
         <div class="card panel" style="margin-top:16px">
           <h2>Who can edit</h2>
-          ${admins().length?`<p>Only these people can make changes. Everyone else who signs in sees just their own attendance, view only.</p>
-          <ul class="admins">${admins().map(a=>`<li><span>${esc(a)}${a===myEmail()?' (you)':''}</span><button class="btn small danger" data-adm="${esc(a)}">Remove</button></li>`).join('')}</ul>`
-          :`<p class="warn-text">Right now anyone who signs in can edit. Add yourself as an admin to make the page view only for everyone else.</p>`}
-          <div class="row"><div class="field"><label for="admE">Admin's work email</label><input id="admE" type="email" placeholder="name@company.com"></div></div>
-          <div class="row"><button class="btn primary" id="admAdd">Add admin</button>${admins().includes(myEmail())?'':`<button class="btn" id="admMe">Add me (${esc(myEmail())})</button>`}</div>
+          <p>Only these people can make changes. Everyone else who signs in sees just their own attendance, view only.</p>
+          <ul class="admins">${admins().map(a=>`<li><span>${esc(a)}${a===myEmail()?' (you)':''}</span></li>`).join('')}</ul>
         </div>
         <div class="card panel" style="margin-top:16px">
           <h2>Backup copy</h2>
@@ -1122,16 +1119,6 @@ function renderHolidays(){
         </div>
       </div>
     </div>`;
-  const addAdmin=em=>{em=(em||'').trim().toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){alert('Enter a valid work email.');return}
-    if(admins().includes(em))return; const first=!admins().length;
-    if(first&&em!==myEmail()&&!confirm(`You aren't on the list. After adding ${em}, you won't be able to edit anymore. Continue?`))return;
-    snapshot(); data.settings.admins=[...admins(),em]; changed(); render(); toast(`${em} can now edit.`,true)};
-  document.getElementById('admAdd').onclick=()=>addAdmin(document.getElementById('admE').value);
-  const am=document.getElementById('admMe'); if(am) am.onclick=()=>addAdmin(myEmail());
-  main.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>{const em=b.dataset.adm;const rest=admins().filter(a=>a!==em);
-    if(em===myEmail()&&rest.length&&!confirm('Remove yourself? You will no longer be able to edit.'))return;
-    if(!rest.length&&!confirm('Removing the last admin lets everyone who signs in edit again. Continue?'))return;
-    snapshot(); data.settings.admins=rest; changed(); render(); toast(`${em} removed from admins.`,true)});
   document.getElementById('dlCopy').onclick=downloadCopy;
   document.getElementById('ldCopy').onclick=()=>document.getElementById('fileInput').click();
   main.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
