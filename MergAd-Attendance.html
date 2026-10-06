@@ -90,6 +90,7 @@ table.list tbody tr:hover{background:var(--surface-2)}
 table.list tbody tr:last-child td{border-bottom:0}
 .who b{display:block;font-weight:600}
 .who small{color:var(--muted);font-size:13px}
+.who small.meta{display:flex;gap:16px;flex-wrap:wrap}
 .pending{font-size:20px;font-weight:700}
 .pending.low{color:var(--danger)}
 .tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:500}
@@ -634,7 +635,7 @@ function renderBalances(keepFocus){
     ${list.length?`<table class="list">
       <thead><tr>${th('order','Person')}${th('ent','Entitled',1)}${th('taken','Taken',1)}${th('pending','Pending',1)}<th>Used so far</th>${th('wfo','Office days',1)}${th('wfh','WFH days',1)}${th('lop','LOP days',1)}</tr></thead>
       <tbody>${list.map(({e,s})=>`<tr data-open="${e.id}">
-        <td class="who"><b>${esc(e.name)}${e.lwd&&e.lwd<TODAY?'<span class="tag">Left '+nice(e.lwd)+'</span>':''}${e.category&&e.category!=='MergAd'?`<span class="tag">${esc(e.category)}</span>`:''}</b><small>${esc(e.manager||'No manager')}, joined ${nice(e.doj)}</small></td>
+        <td class="who"><b>${esc(e.name)}${e.lwd&&e.lwd<TODAY?'<span class="tag">Left '+nice(e.lwd)+'</span>':''}${e.category&&e.category!=='MergAd'?`<span class="tag">${esc(e.category)}</span>`:''}</b><small class="meta"><span>Manager: ${esc(e.manager||'none')}</span><span>Joined ${nice(e.doj)}</span></small></td>
         <td class="num">${fmt(s.ent)}</td>
         <td class="num">${fmt(s.taken)}</td>
         <td class="num"><span class="pending ${s.pending<=3?'low':''}">${fmt(s.pending)}</span></td>
@@ -691,7 +692,7 @@ function renderRegister(){
       const iso=`${ym}-${pad(d)}`; const we=isWeekend(iso)?' we':'', ph=HOLS[iso]?' ph':'', nw=iso===TODAY?' now':'';
       tds+=`<td class="d${we}${ph}${nw}">`+[0,1].map(k=>{const v=a[(d-1)*2+k];return `<div class="${cellClass(e,iso,v)}" data-e="${e.id}" data-i="${(d-1)*2+k}" title="${esc(cellTitle(e,iso,k,v))}">${v&&CODES[v]?CODES[v].letter:''}</div>`}).join('')+`</td>`;
     }
-    body+=`<tr data-row="${e.id}"><th class="nm"><button data-open="${e.id}" title="${esc(e.name)}">${esc(e.name)}</button><small>${esc(e.manager||'')}</small></th>${tds}${summaryCells(e,ym)}</tr>`;
+    body+=`<tr data-row="${e.id}"><th class="nm"><button data-open="${e.id}" title="${esc(e.name)}">${esc(e.name)}</button><small>${e.manager?'Manager: '+esc(e.manager):''}</small></th>${tds}${summaryCells(e,ym)}</tr>`;
   }
   const unmarked=rows.reduce((t,e)=>t+monthCounts(e,ym).unmarked,0)/2;
   main.innerHTML=`
