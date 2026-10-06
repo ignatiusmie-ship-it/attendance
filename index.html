@@ -793,7 +793,7 @@ function renderBalances(keepFocus){
   const th=(key,label,num)=>`<th class="sortable ${num?'num':''}" data-sort="${key}" ${st.sort===key?`aria-sort="${dir>0?'ascending':'descending'}"`:''}>${label}</th>`;
   main.innerHTML=`
     <div class="head">
-      <div><h1>Leave balances, ${data.year}</h1><p class="sub">${fmt(+data.settings.annualLeave)} days a year, starting fresh each January. People who join during the year get a share for the months left. Names are in the same order as the sheet. Click a name for the month-by-month breakdown.</p></div>
+      <div><h1>Leave balances, ${data.year}</h1></div>
       ${controlsHTML(`<label class="check"><input type="checkbox" id="former" ${st.former?'checked':''}> Show people who left (${formerCount})</label>`)}
     </div>
     ${todayHTML()}
