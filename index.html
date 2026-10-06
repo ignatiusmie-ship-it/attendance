@@ -98,6 +98,15 @@ table.list tbody tr:hover{background:var(--surface-2)}
 table.list tbody tr:last-child td{border-bottom:0}
 .who b{display:block;font-weight:600}
 .who small{color:var(--muted);font-size:13px}
+tr.left-head td{background:var(--surface-2);color:var(--maroon);font-weight:700;font-size:13px;padding:9px 14px;border-top:2px solid var(--maroon);cursor:default}
+tr.left-head span{font-weight:400;color:var(--muted);margin-left:10px}
+tr.left-head:hover{background:none}
+tr.left-row td{background:color-mix(in srgb,var(--maroon) 5%,var(--surface))}
+tr.left-row td:first-child{box-shadow:inset 3px 0 0 var(--maroon)}
+tr.left-row .who b{color:var(--muted)}
+tr.left-row .pending{color:var(--muted)}
+tr.left-row:hover td{background:color-mix(in srgb,var(--maroon) 9%,var(--surface))}
+.left-pill{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:600;color:#fff;background:var(--maroon);border-radius:20px;padding:1px 8px;vertical-align:1px}
 .who .joined{font-weight:400;color:var(--muted);font-size:14px}
 .pending{font-size:20px;font-weight:700}
 .pending.low{color:var(--danger)}
@@ -777,6 +786,9 @@ function renderBalances(keepFocus){
     const v=k==='order'?a.i-b.i:k==='name'?a.e.name.localeCompare(b.e.name):k==='pending'?a.s.pending-b.s.pending:k==='taken'?a.s.taken-b.s.taken:k==='ent'?a.s.ent-b.s.ent:k==='wfh'?a.s.tot.wfh-b.s.tot.wfh:k==='wfo'?a.s.tot.wfo-b.s.tot.wfo:a.s.tot.lop-b.s.tot.lop;
     return v*dir;
   });
+  // People who left are grouped at the end under their own heading
+  const leftList=list.filter(x=>!isCurrent(x.e)); list=list.filter(x=>isCurrent(x.e)).concat(leftList);
+  const firstLeft=leftList.length?leftList[0].e.id:null;
   const formerCount=data.employees.filter(e=>activeInYear(e)&&!isCurrent(e)).length;
   const th=(key,label,num)=>`<th class="sortable ${num?'num':''}" data-sort="${key}" ${st.sort===key?`aria-sort="${dir>0?'ascending':'descending'}"`:''}>${label}</th>`;
   main.innerHTML=`
@@ -788,8 +800,8 @@ function renderBalances(keepFocus){
     <div class="card scroll-x">
     ${list.length?`<table class="list">
       <thead><tr>${th('order','Person')}${th('ent','Entitled',1)}${th('taken','Taken',1)}${th('pending','Pending',1)}<th>Used so far</th>${th('wfo','Office days',1)}${th('wfh','WFH days',1)}${th('lop','LOP days',1)}</tr></thead>
-      <tbody>${list.map(({e,s})=>`<tr data-open="${e.id}">
-        <td class="who"><b>${esc(e.name)} <span class="joined">(Joined ${nice(e.doj)})</span>${e.lwd&&e.lwd<TODAY?'<span class="tag">Left '+nice(e.lwd)+'</span>':''}${e.category&&e.category!=='MergAd'?`<span class="tag">${esc(e.category)}</span>`:''}</b><small>Manager: ${esc(e.manager||'none')}</small></td>
+      <tbody>${list.map(({e,s})=>`${e.id===firstLeft?`<tr class="left-head"><td colspan="8">People who left (${leftList.length})<span>Their leave figures stop at their last working day.</span></td></tr>`:''}<tr data-open="${e.id}" class="${isCurrent(e)?'':'left-row'}">
+        <td class="who"><b>${esc(e.name)} <span class="joined">(Joined ${nice(e.doj)})</span>${!isCurrent(e)?'<span class="left-pill">Left '+nice(e.lwd)+'</span>':''}${e.category&&e.category!=='MergAd'?`<span class="tag">${esc(e.category)}</span>`:''}</b><small>Manager: ${esc(e.manager||'none')}</small></td>
         <td class="num">${fmt(s.ent)}</td>
         <td class="num">${fmt(s.taken)}</td>
         <td class="num"><span class="pending ${s.pending<=3?'low':''}">${fmt(s.pending)}</span></td>
