@@ -203,9 +203,30 @@ table.mini th:first-child,table.mini td:first-child{text-align:left}
 table.mini thead th{font-size:12px;color:var(--muted);font-weight:600}
 table.mini tfoot td{font-weight:700;border-bottom:0}
 table.mini tr.na td{color:var(--line)}
-.leave-dates{margin-top:18px}
-.leave-dates p{margin:4px 0;font-size:14px}
-.leave-dates b{display:inline-block;min-width:40px}
+.person-grid{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:22px;align-items:start}
+dialog.wide{max-width:min(1140px,calc(100vw - 24px))}
+.leave-dates{background:var(--surface-2);border:1px solid var(--line-2);border-radius:var(--radius-m);padding:14px 16px;position:sticky;top:0}
+.leave-dates h3{margin:0;font-size:15px;font-weight:600}
+.ld-sum{color:var(--muted);font-size:13px;margin:2px 0 12px}
+.lm{padding:10px 0;border-top:1px solid var(--line-2)}
+.lm-h{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}
+.lm-h span:first-child{font-weight:600}
+.lm-h span:last-child{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;flex-direction:column;align-items:center;min-width:38px;padding:3px 5px 4px;border-radius:6px;background:var(--lve);color:var(--lve-ink);line-height:1.1;position:relative}
+.chip b{font-size:14px;font-weight:700}
+.chip i{font-style:normal;font-size:10px;opacity:.8}
+.chip{min-width:44px}
+.chip.am,.chip.pm{border:1px solid var(--lve);color:var(--ink)}
+.chip.am{background:linear-gradient(to bottom,var(--lve) 50%,var(--surface) 50%)}
+.chip.pm{background:linear-gradient(to top,var(--lve) 50%,var(--surface) 50%)}
+.ld-key{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line-2)}
+.ld-key .sq{width:12px;height:12px;border-radius:3px;background:var(--lve);border:1px solid var(--lve);margin-left:6px}
+.ld-key .sq:first-child{margin-left:0}
+.ld-key .sq.am{background:linear-gradient(to bottom,var(--lve) 50%,var(--surface) 50%)}
+.ld-key .sq.pm{background:linear-gradient(to top,var(--lve) 50%,var(--surface) 50%)}
+.ld-empty{color:var(--muted);font-size:14px;margin-top:8px}
+@media (max-width:900px){.person-grid{grid-template-columns:1fr}.leave-dates{position:static}}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field{display:flex;flex-direction:column;gap:5px}
 .field label{font-size:13px;font-weight:600}
@@ -893,18 +914,20 @@ function exportCSV(){
 
 /* ---------- person dialog ---------- */
 const dlg=document.getElementById('dlg');
-function showDlg(html,narrow){dlg.className=narrow?'narrow':'';dlg.innerHTML=html;if(!dlg.open)dlg.showModal();dlg.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>dlg.close())}
+function showDlg(html,narrow){dlg.className=narrow===true?'narrow':(narrow||'');dlg.innerHTML=html;if(!dlg.open)dlg.showModal();dlg.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>dlg.close())}
 dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
 function leaveDatesHTML(e){
-  const out=[];
+  const groups=[]; let total=0;
   for(let m=1;m<=12;m++){
-    const ym=ymOf(m), a=arr(e.id,ym,false); if(!a) continue; const parts=[];
+    const ym=ymOf(m), a=arr(e.id,ym,false); if(!a) continue; const chips=[]; let n=0;
     for(let d=1;d<=dim(ym);d++){const iso=`${ym}-${pad(d)}`;if(!isActive(e,iso))continue;
-      const f=a[(d-1)*2]==='LVE', s=a[(d-1)*2+1]==='LVE';
-      if(f&&s) parts.push(`${d}`); else if(f) parts.push(`${d} (morning)`); else if(s) parts.push(`${d} (afternoon)`);}
-    if(parts.length) out.push(`<p><b>${MON[m-1]}</b> ${parts.join(', ')}</p>`);
+      const f=a[(d-1)*2]==='LVE', s=a[(d-1)*2+1]==='LVE'; if(!f&&!s) continue;
+      const half=f&&s?'':(f?'Morning':'Afternoon'); n+=half?0.5:1;
+      chips.push(`<span class="chip ${half?(half==='Morning'?'am':'pm'):''}" title="${niceShort(iso)}${half?', '+half.toLowerCase()+' only':', full day'}"><b>${d}</b><i>${WD[dow(iso)]}${half?' '+(half==='Morning'?'AM':'PM'):''}</i></span>`);}
+    if(chips.length){ total+=n; groups.push(`<div class="lm"><div class="lm-h"><span>${MONTHS[m-1]}</span><span>${fmt(n)} day${n===1?'':'s'}</span></div><div class="chips">${chips.join('')}</div></div>`) }
   }
-  return out.length?out.join(''):'<p>No leave taken this year.</p>';
+  if(!groups.length) return `<div class="ld-empty">No leave taken in ${data.year}.</div>`;
+  return `<div class="ld-sum">${fmt(total)} day${total===1?'':'s'} across ${groups.length} month${groups.length===1?'':'s'}</div>${groups.join('')}<div class="ld-key"><span class="sq"></span>Full day<span class="sq am"></span>Morning<span class="sq pm"></span>Afternoon</div>`;
 }
 function openPerson(id){
   const e=emp(id), s=yearStats(e);
@@ -920,11 +943,11 @@ function openPerson(id){
         ${s.tot.lop?`<div><strong style="color:var(--lop)">${fmt(s.tot.lop)}</strong><span>loss of pay</span></div>`:''}
       </div>
       <div class="explain">${entitlementWhy(e)}${s.tot.unmarked?` ${fmt(s.tot.unmarked)} working days up to today are not marked yet.`:''}</div>
-      <div class="scroll-x"><table class="mini"><thead><tr><th>Month</th><th>Leave available</th><th>Total leaves</th><th>Leave balance</th><th>Total WFO</th><th>Total WFH</th><th>Total LOP</th><th>Salary days</th></tr></thead>
+      <div class="person-grid"><div class="scroll-x"><table class="mini"><thead><tr><th>Month</th><th>Leave available</th><th>Total leaves</th><th>Leave balance</th><th>Total WFO</th><th>Total WFH</th><th>Total LOP</th><th>Salary days</th></tr></thead>
       <tbody>${rows}</tbody><tfoot><tr><td>Year</td><td>${fmt(s.ent)}</td><td>${fmt(s.taken)}</td><td>${fmt(s.ent-s.taken)}</td><td>${fmt(s.tot.wfo)}</td><td>${fmt(s.tot.wfh)}</td><td>${fmt(s.tot.lop)}</td><td>${fmt(s.tot.salary)}</td></tr></tfoot></table></div>
-      <div class="leave-dates"><h2 style="font-size:15px;margin-bottom:6px">Leave dates</h2>${leaveDatesHTML(e)}</div>
+      <aside class="leave-dates" aria-label="Leave dates"><h3>Leave dates</h3>${leaveDatesHTML(e)}</aside></div>
     </div>
-    <div class="dlg-foot"><button class="btn" id="pEdit">Edit details</button><button class="btn primary" data-close>Close</button></div>`);
+    <div class="dlg-foot"><button class="btn" id="pEdit">Edit details</button><button class="btn primary" data-close>Close</button></div>`,'wide');
   document.getElementById('pEdit').onclick=()=>openEmployee(id);
 }
 
