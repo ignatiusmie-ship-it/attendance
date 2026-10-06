@@ -203,7 +203,14 @@ table.mini th:first-child,table.mini td:first-child{text-align:left}
 table.mini thead th{font-size:12px;color:var(--muted);font-weight:600}
 table.mini tfoot td{font-weight:700;border-bottom:0}
 table.mini tr.na td{color:var(--line)}
-.person-grid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;align-items:start}
+.person-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}
+.p-side{display:flex;flex-direction:column;gap:10px}
+.p-nums{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-2);border:1px solid var(--line-2);border-radius:var(--radius-m);overflow:hidden}
+.p-nums div{background:var(--surface);padding:8px 12px;display:flex;flex-direction:column}
+.p-nums strong{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.p-nums span{color:var(--muted);font-size:12px}
+.p-nums div:nth-child(5){grid-column:1/-1}
+.p-note{color:var(--muted);font-size:12.5px;margin:8px 2px 0;line-height:1.4}
 dialog.wide .dlg-head{padding:12px 18px 8px}
 dialog.wide .dlg-head h2{font-size:17px}
 dialog.wide .facts{font-size:13px;margin-top:1px}
@@ -236,7 +243,7 @@ dialog.wide{max-width:min(1140px,calc(100vw - 24px))}
 .ld-key .sq.am{background:linear-gradient(to bottom,var(--lve) 50%,var(--surface) 50%)}
 .ld-key .sq.pm{background:linear-gradient(to top,var(--lve) 50%,var(--surface) 50%)}
 .ld-empty{color:var(--muted);font-size:14px;margin-top:8px}
-@media (max-width:900px){.person-grid{grid-template-columns:1fr}.leave-dates{position:static}}
+@media (max-width:900px){.person-grid{grid-template-columns:1fr}}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field{display:flex;flex-direction:column;gap:5px}
 .field label{font-size:13px;font-weight:600}
@@ -945,17 +952,23 @@ function openPerson(id){
   showDlg(`
     <div class="dlg-head"><div><h2>${esc(e.name)}</h2><div class="facts">${esc(e.category||'')}${e.manager?`, reports to ${esc(e.manager)}`:''}. Joined ${nice(e.doj)}${e.lwd?`, last day ${nice(e.lwd)}`:''}.${e.note?` Note: ${esc(e.note)}`:''}</div></div><button class="x" data-close aria-label="Close">×</button></div>
     <div class="dlg-body">
-      <div class="bignums">
-        <div><strong>${fmt(s.ent)}</strong><span>leave days for ${data.year}</span></div>
-        <div><strong>${fmt(s.taken)}</strong><span>taken</span></div>
-        <div><strong style="${s.pending<=3?'color:var(--danger)':''}">${fmt(s.pending)}</strong><span>pending</span></div>
-        <div><strong>${fmt(s.tot.wfh)}</strong><span>WFH days</span></div>
-        ${s.tot.lop?`<div><strong style="color:var(--lop)">${fmt(s.tot.lop)}</strong><span>loss of pay</span></div>`:''}
-      </div>
-      <div class="explain">${entitlementWhy(e)}${s.tot.unmarked?` ${fmt(s.tot.unmarked)} working days up to today are not marked yet.`:''}</div>
-      <div class="person-grid"><div class="scroll-x"><table class="mini"><thead><tr><th>Month</th><th>Leave available</th><th>Total leaves</th><th>Leave balance</th><th>Total WFO</th><th>Total WFH</th><th>Total LOP</th><th>Salary days</th></tr></thead>
+      <div class="person-grid">
+        <aside class="p-side">
+          <div class="p-nums">
+            <div><strong>${fmt(s.ent)}</strong><span>entitled</span></div>
+            <div><strong>${fmt(s.taken)}</strong><span>taken</span></div>
+            <div><strong style="${s.pending<=3?'color:var(--danger)':''}">${fmt(s.pending)}</strong><span>pending</span></div>
+            <div><strong>${fmt(s.tot.wfh)}</strong><span>WFH days</span></div>
+            ${s.tot.lop?`<div><strong style="color:var(--lop)">${fmt(s.tot.lop)}</strong><span>loss of pay</span></div>`:''}
+          </div>
+          <div class="leave-dates" aria-label="Leave dates"><h3>Leave dates</h3>${leaveDatesHTML(e)}</div>
+        </aside>
+        <div class="p-main">
+          <div class="scroll-x"><table class="mini"><thead><tr><th>Month</th><th>Leave available</th><th>Total leaves</th><th>Leave balance</th><th>Total WFO</th><th>Total WFH</th><th>Total LOP</th><th>Salary days</th></tr></thead>
       <tbody>${rows}</tbody><tfoot><tr><td>Year</td><td>${fmt(s.ent)}</td><td>${fmt(s.taken)}</td><td>${fmt(s.ent-s.taken)}</td><td>${fmt(s.tot.wfo)}</td><td>${fmt(s.tot.wfh)}</td><td>${fmt(s.tot.lop)}</td><td>${fmt(s.tot.salary)}</td></tr></tfoot></table></div>
-      <aside class="leave-dates" aria-label="Leave dates"><h3>Leave dates</h3>${leaveDatesHTML(e)}</aside></div>
+          <p class="p-note">${entitlementWhy(e)}${s.tot.unmarked?` ${fmt(s.tot.unmarked)} working days up to today are not marked yet.`:''}</p>
+        </div>
+      </div>
     </div>
     <div class="dlg-foot"><button class="btn" id="pEdit">Edit details</button><button class="btn primary" data-close>Close</button></div>`,'wide');
   document.getElementById('pEdit').onclick=()=>openEmployee(id);
